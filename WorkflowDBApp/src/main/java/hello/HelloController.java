@@ -8,6 +8,10 @@ public class HelloController {
     
     @RequestMapping("/")
     public String index() {
+    	
+    	DbConnection dbCon = new DbConnection();
+    	dbCon.getConnection();
+    	
         return "Greetings from Spring Boot!";
     }
     

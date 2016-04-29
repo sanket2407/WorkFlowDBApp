@@ -32,6 +32,7 @@ dependencies {
     // tag::tests[]
     testCompile("org.springframework.boot:spring-boot-starter-test")
     // end::tests[]
+    compile("mysql:mysql-connector-java:5.1.6")
 }
 
 task wrapper(type: Wrapper) {

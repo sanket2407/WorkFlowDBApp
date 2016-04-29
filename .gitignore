@@ -1,3 +1,6 @@
 WorkflowDBApp/build/
 .metadata/
 WorkflowDBApp/.gradle/
+WorkflowDBApp/.settings
+WorkflowDBApp/.classpath
+.recommenders/

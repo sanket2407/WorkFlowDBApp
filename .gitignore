@@ -1,6 +1,9 @@
 WorkflowDBApp/build/
-.metadata/
 WorkflowDBApp/.gradle/
-WorkflowDBApp/.settings
+WorkflowDBApp/.settings/
 WorkflowDBApp/.classpath
+WorkflowDBApp/bin/
+.metadata/
 .recommenders/
+RemoteSystemsTempFiles/
+Servers/

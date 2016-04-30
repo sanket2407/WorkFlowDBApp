@@ -97,3 +97,5 @@ USE workflow;
 
 INSERT INTO organization ( name, address, admin_email, password ) VALUES ('Microsoft','Seattle','micro@micro.com','admin');  
 INSERT INTO department ( name, org_id ) VALUES ('Software','1');
+INSERT INTO role ( name) VALUES ('depart_admin');
+INSERT INTO role ( name) VALUES ('user');

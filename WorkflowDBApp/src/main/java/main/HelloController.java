@@ -12,7 +12,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import databaseConnection.DBConnection;
 import model.Department;
+import model.Helper;
 import model.Organization;
+import model.Role;
+import model.Test;
 
 @RestController
 public class HelloController {
@@ -21,6 +24,52 @@ public class HelloController {
 	public String index() {
 
 		return "Greetings from Spring Boot!";
+	}
+	
+	/*
+	 * {"role_name" : "depart_admin"}
+	*/
+	@RequestMapping(value = "/createRole", method = RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity<Object> createRole(@RequestBody Role role) {
+
+		Connection conn = new DBConnection().getConnection();
+		Statement stmt = null;
+
+		try {
+			stmt = conn.createStatement();
+			String sql;
+			sql = "INSERT INTO role ( name) VALUES ('" + role.getRole_name() + "')";
+
+			System.out.println(sql);
+
+			stmt.executeUpdate(sql);
+
+			stmt.close();
+			conn.close();
+		} catch (Exception e) {
+			// Handle errors for Class.forName
+			e.printStackTrace();
+			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		} finally {
+			// finally block used to close resources
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException se1) {
+				se1.printStackTrace();
+				return new ResponseEntity<Object>(se1.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+			} // nothing we can do
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException se2) {
+				se2.printStackTrace();
+				return new ResponseEntity<Object>(se2.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+			} // end finally try
+		} // end try
+
+		return new ResponseEntity<Object>(role, HttpStatus.CREATED);
 	}
 
 	/*
@@ -136,6 +185,8 @@ public class HelloController {
 	@ResponseBody
 	public ResponseEntity<Object> createDepartment(@RequestBody Department department) {
 
+		Helper helper = new Helper();
+		
 		DBConnection dbCon = new DBConnection();
 		Connection conn = dbCon.getConnection();
 		Statement stmt = null;
@@ -144,15 +195,11 @@ public class HelloController {
 			System.out.println("Creating statement...");
 			stmt = conn.createStatement();
 			String sql;
-			sql = "SELECT org_id FROM organization where admin_email='" + department.getAdmin_email() + "'";
-			ResultSet rs = stmt.executeQuery(sql);
-			System.out.println(sql);
-			while (rs.next()) {
-				// Retrieve by column name
-				System.out.println(rs.getInt("org_id"));
-				department.setOrg_id(rs.getInt("org_id"));
-			}
+			
+			department.setOrg_id(helper.getOrgIDFromAdminEmail(department.getAdmin_email()));
+			
 			if(department.getOrg_id()!= -1){
+			
 			sql = "INSERT INTO department ( name, org_id ) VALUES ('" + department.getDepartment_name()
 					+ "','" + department.getOrg_id() + "')";
 
@@ -163,7 +210,6 @@ public class HelloController {
 			else{
 				return new ResponseEntity<Object>("Organization not exists", HttpStatus.INTERNAL_SERVER_ERROR);
 			}
-			rs.close();
 			stmt.close();
 			conn.close();
 		} catch (Exception e) {
@@ -192,4 +238,24 @@ public class HelloController {
 	
 	
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	@RequestMapping(value = "/test", method = RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity<Object> test(@RequestBody Test test) {
+		
+		System.out.println(new Helper().getOrgIDFromAdminEmail(test.getTest_string()));
+
+		return new ResponseEntity<Object>(test, HttpStatus.OK);
+	}
+	
 }

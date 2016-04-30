@@ -12,8 +12,13 @@ public class DbConnection{
    static final String PASS = "root";
    
    public void getConnection() {
+   
+	   
    Connection conn = null;
    Statement stmt = null;
+   
+   
+   
    try{
       //STEP 2: Register JDBC driver
       //validating driver class by checking its availability in project

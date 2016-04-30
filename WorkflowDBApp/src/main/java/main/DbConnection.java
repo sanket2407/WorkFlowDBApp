@@ -1,6 +1,10 @@
-package hello;
+package main;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 public class DbConnection{
    // JDBC driver name and database URL

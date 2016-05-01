@@ -1,6 +1,13 @@
 package main;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,11 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import databaseConnection.DBConnection;
 import model.Department;
-import model.DeptAdmin;
 import model.Helper;
 import model.Organization;
 import model.Role;
 import model.Test;
+import model.User;
 
 @RestController
 public class HelloController {
@@ -237,13 +244,20 @@ public class HelloController {
 	}
 
 	/*
-	 * {"email_id":"bill@apple.com","org_name":"Microsoft",
-	 * "address":"101 E San", "dept_name": "Software", "password": "admin",
-	 * "role_name": "depart_admin"}
+	 * { "email_id": "bill@apple.com", "org_name": "Microsoft", "address":
+	 * "101 E San", "dept_name": "Software", "password": "admin", "role_name":
+	 * "depart_admin", "phones": [{ "phone": "0123456789" }, { "phone":
+	 * "1234567890" }] }
 	 */
-	@RequestMapping(value = "/deptAdminSignUp", method = RequestMethod.POST)
+	/*
+	 * { "email_id": "parth@microsoft.com", "org_name": "Microsoft", "address":
+	 * "111 E San", "dept_name": "Software", "password": "admin", "role_name":
+	 * "user", "phones": [{ "phone": "0123456789" }, { "phone": "1234567890" }]
+	 * }
+	 */
+	@RequestMapping(value = "/userSignUp", method = RequestMethod.POST)
 	@ResponseBody
-	public ResponseEntity<Object> test(@RequestBody DeptAdmin deptAdmin) {
+	public ResponseEntity<Object> test(@RequestBody User user) {
 
 		Helper helper = new Helper();
 
@@ -256,29 +270,35 @@ public class HelloController {
 			stmt = conn.createStatement();
 			String sql;
 
-			deptAdmin.setOrg_id(helper.getOrgIDFromOrgName(deptAdmin.getOrg_name()));
-			deptAdmin.setDept_id(helper.getDeptIDFromDeptName(deptAdmin.getDept_name()));
-			deptAdmin.setRole_id(helper.getRoleFromRoleName(deptAdmin.getRole_name()));
+			user.setOrg_id(helper.getOrgIDFromOrgName(user.getOrg_name()));
+			user.setDept_id(helper.getDeptIDFromDeptName(user.getDept_name()));
+			user.setRole_id(helper.getRoleFromRoleName(user.getRole_name()));
 
-			if (deptAdmin.getOrg_id() == -1) {
+			if (user.getOrg_id() == -1) {
 				return new ResponseEntity<Object>("Organization not exists", HttpStatus.INTERNAL_SERVER_ERROR);
-			}
-			else if(deptAdmin.getDept_id() == -1){
+			} else if (user.getDept_id() == -1) {
 				return new ResponseEntity<Object>("Department not exists", HttpStatus.INTERNAL_SERVER_ERROR);
-			}
-			else if(deptAdmin.getRole_id() == -1){
+			} else if (user.getRole_id() == -1) {
 				return new ResponseEntity<Object>("Role not exists", HttpStatus.INTERNAL_SERVER_ERROR);
-			}
-			else{
+			} else {
 				sql = "INSERT INTO user ( email_id, org_id, password, address, dept_id, role_id ) VALUES ('"
-						+ deptAdmin.getEmail_id() + "','" + deptAdmin.getOrg_id() + "','" + deptAdmin.getPassword()
-						+ "','" + deptAdmin.getAddress() + "','" + deptAdmin.getDept_id() + "','"
-						+ deptAdmin.getRole_id() + "')";
+						+ user.getEmail_id() + "','" + user.getOrg_id() + "','" + user.getPassword() + "','"
+						+ user.getAddress() + "','" + user.getDept_id() + "','" + user.getRole_id() + "')";
 
 				System.out.println(sql);
-
 				stmt.executeUpdate(sql);
-			} 
+
+				Object obj = user.getPhones();
+
+				List<LinkedHashMap> list = (ArrayList<LinkedHashMap>) obj;
+				for (int i = 0; i < list.size(); i++) {
+					sql = "INSERT INTO phonetbl ( email_id, org_id, phone) VALUES ('" + user.getEmail_id() + "','"
+							+ user.getOrg_id() + "','" + list.get(i).get("phone") + "')";
+					System.out.println(sql);
+					stmt.executeUpdate(sql);
+				}
+
+			}
 			stmt.close();
 			conn.close();
 		} catch (Exception e) {
@@ -303,14 +323,19 @@ public class HelloController {
 			} // end finally try
 		} // end try
 
-		return new ResponseEntity<Object>(deptAdmin, HttpStatus.OK);
+		return new ResponseEntity<Object>(user, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/test", method = RequestMethod.POST)
 	@ResponseBody
 	public ResponseEntity<Object> test(@RequestBody Test test) {
 
-		System.out.println(new Helper().getOrgIDFromAdminEmail(test.getTest_string()));
+		Object obj = test.getTest_object();
+
+		List<LinkedHashMap> list = (ArrayList<LinkedHashMap>) obj;
+		for (int i = 0; i < list.size(); i++) {
+			System.out.println(list.get(i).get("phone"));
+		}
 
 		return new ResponseEntity<Object>(test, HttpStatus.OK);
 	}

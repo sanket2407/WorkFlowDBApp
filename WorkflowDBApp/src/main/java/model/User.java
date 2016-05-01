@@ -1,6 +1,6 @@
 package model;
 
-public class DeptAdmin {
+public class User {
 	
 	private String email_id = "";
 	private String org_name = "";
@@ -11,7 +11,14 @@ public class DeptAdmin {
 	private String password = "";
 	private String role_name = "";
 	private int role_id;
+	private Object phones;
 	
+	public Object getPhones() {
+		return phones;
+	}
+	public void setPhones(Object phones) {
+		this.phones = phones;
+	}
 	public String getEmail_id() {
 		return email_id;
 	}

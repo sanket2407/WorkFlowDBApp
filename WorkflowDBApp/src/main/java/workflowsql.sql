@@ -90,13 +90,17 @@ constraint fk12 FOREIGN KEY (workflow_id) references `workflow`.`workflow_master
 CREATE TABLE `workflow`.`phonetbl` (
   `email_id` varchar(45) NOT NULL,
   `org_id` INT NOT NULL,
-  `phone` INT(10) NOT NULL,
+  `phone` varchar(10) NOT NULL,
   constraint fk13 FOREIGN KEY (email_id,org_id) references `workflow`.`user`(email_id,org_id));
   
 USE workflow;  
-
 INSERT INTO organization ( name, address, admin_email, password ) VALUES ('Microsoft','Seattle','micro@micro.com','admin');  
 INSERT INTO department ( name, org_id ) VALUES ('Software','1');
 INSERT INTO role ( name) VALUES ('depart_admin');
 INSERT INTO role ( name) VALUES ('user');
-INSERT INTO user ( email_id, org_id, password, address, dept_id, role_id ) VALUES ('bill@microsoft.com','1','admin','101 E San','1','1');
+INSERT INTO user ( email_id, org_id, password, address, dept_id, role_id ) VALUES ('bill@apple.com','1','admin','101 E San','1','1');
+INSERT INTO phonetbl ( email_id, org_id, phone) VALUES ('bill@apple.com','1','0123456789');
+INSERT INTO phonetbl ( email_id, org_id, phone) VALUES ('bill@apple.com','1','1234567890');
+INSERT INTO user ( email_id, org_id, password, address, dept_id, role_id ) VALUES ('parth@microsoft.com','1','admin','111 E San','1','2');
+INSERT INTO phonetbl ( email_id, org_id, phone) VALUES ('parth@microsoft.com','1','0123456789');
+INSERT INTO phonetbl ( email_id, org_id, phone) VALUES ('parth@microsoft.com','1','1234567890');

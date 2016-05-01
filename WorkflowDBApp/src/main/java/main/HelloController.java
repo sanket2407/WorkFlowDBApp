@@ -7,7 +7,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,9 +19,12 @@ import org.springframework.web.bind.annotation.RestController;
 import databaseConnection.DBConnection;
 import model.Department;
 import model.Helper;
+import model.Layer;
+import model.Level;
 import model.Organization;
 import model.RequestType;
 import model.Role;
+import model.Status;
 import model.Test;
 import model.User;
 
@@ -413,8 +415,9 @@ public class HelloController {
 			if (requestType.getOrg_id() == -1) {
 				return new ResponseEntity<Object>("Organization not exists", HttpStatus.INTERNAL_SERVER_ERROR);
 			} else {
-				sql = "INSERT INTO request_type ( name, email_id, org_id ) VALUES ('" + requestType.getRequest_type_name()
-						+ "','" + requestType.getEmail_id() + "','" + requestType.getOrg_id() + "')";
+				sql = "INSERT INTO request_type ( name, email_id, org_id ) VALUES ('"
+						+ requestType.getRequest_type_name() + "','" + requestType.getEmail_id() + "','"
+						+ requestType.getOrg_id() + "')";
 
 				System.out.println(sql);
 				stmt.executeUpdate(sql);
@@ -447,8 +450,152 @@ public class HelloController {
 		return new ResponseEntity<Object>(requestType, HttpStatus.OK);
 	}
 
+	/*
+	 * { "level_name" : "Level 0", "description" : "requester-level" }
+	 */
+	@RequestMapping(value = "/createLevel", method = RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity<Object> createLevel(@RequestBody Level level) {
+
+		DBConnection dbCon = new DBConnection();
+		Connection conn = dbCon.getConnection();
+		Statement stmt = null;
+		try {
+
+			System.out.println("Creating statement...");
+			stmt = conn.createStatement();
+			String sql;
+
+			sql = "INSERT INTO level_master ( name, description ) VALUES ('" + level.getLevel_name()
+					+ "','" + level.getDescription() + "')";
+
+			System.out.println(sql);
+			stmt.executeUpdate(sql);
+
+			stmt.close();
+			conn.close();
+		} catch (Exception e) {
+			// Handle errors for Class.forName
+			e.printStackTrace();
+			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		} finally {
+			// finally block used to close resources
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException se1) {
+				se1.printStackTrace();
+				return new ResponseEntity<Object>(se1.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+			} // nothing we can do
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException se2) {
+				se2.printStackTrace();
+				return new ResponseEntity<Object>(se2.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+			} // end finally try
+		} // end try
+
+		return new ResponseEntity<Object>(level, HttpStatus.OK);
+	}
+
+	/*
+	 * { "layer_name" : "Layer 0", "description" : "First Worker" }
+	 */
+	@RequestMapping(value = "/createLayer", method = RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity<Object> createLayer(@RequestBody Layer layer) {
+
+		DBConnection dbCon = new DBConnection();
+		Connection conn = dbCon.getConnection();
+		Statement stmt = null;
+		try {
+
+			System.out.println("Creating statement...");
+			stmt = conn.createStatement();
+			String sql;
+
+			sql = "INSERT INTO layer_master ( name, description ) VALUES ('" + layer.getLayer_name()
+					+ "','" + layer.getDescription() + "')";
+
+			System.out.println(sql);
+			stmt.executeUpdate(sql);
+
+			stmt.close();
+			conn.close();
+		} catch (Exception e) {
+			// Handle errors for Class.forName
+			e.printStackTrace();
+			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		} finally {
+			// finally block used to close resources
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException se1) {
+				se1.printStackTrace();
+				return new ResponseEntity<Object>(se1.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+			} // nothing we can do
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException se2) {
+				se2.printStackTrace();
+				return new ResponseEntity<Object>(se2.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+			} // end finally try
+		} // end try
+
+		return new ResponseEntity<Object>(layer, HttpStatus.OK);
+	}
 	
-	
+	/*
+	 * { "status_name" : "Pending", "description" : "Request is in pending state." }
+	 */
+	@RequestMapping(value = "/createStatus", method = RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity<Object> createStatus(@RequestBody Status status) {
+
+		DBConnection dbCon = new DBConnection();
+		Connection conn = dbCon.getConnection();
+		Statement stmt = null;
+		try {
+
+			System.out.println("Creating statement...");
+			stmt = conn.createStatement();
+			String sql;
+
+			sql = "INSERT INTO status_master ( name, description ) VALUES ('" + status.getStatus_name()
+					+ "','" + status.getDescription() + "')";
+
+			System.out.println(sql);
+			stmt.executeUpdate(sql);
+
+			stmt.close();
+			conn.close();
+		} catch (Exception e) {
+			// Handle errors for Class.forName
+			e.printStackTrace();
+			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		} finally {
+			// finally block used to close resources
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException se1) {
+				se1.printStackTrace();
+				return new ResponseEntity<Object>(se1.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+			} // nothing we can do
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException se2) {
+				se2.printStackTrace();
+				return new ResponseEntity<Object>(se2.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+			} // end finally try
+		} // end try
+
+		return new ResponseEntity<Object>(status, HttpStatus.OK);
+	}
 	
 	
 	
@@ -459,13 +606,6 @@ public class HelloController {
 	@RequestMapping(value = "/test", method = RequestMethod.POST)
 	@ResponseBody
 	public ResponseEntity<Object> test(@RequestBody Test test) {
-
-		Object obj = test.getTest_object();
-
-		List<LinkedHashMap> list = (ArrayList<LinkedHashMap>) obj;
-		for (int i = 0; i < list.size(); i++) {
-			System.out.println(list.get(i).get("phone"));
-		}
 
 		return new ResponseEntity<Object>(test, HttpStatus.OK);
 	}

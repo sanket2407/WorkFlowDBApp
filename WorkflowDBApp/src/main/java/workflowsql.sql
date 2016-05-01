@@ -36,12 +36,14 @@ constraint fk4 FOREIGN KEY (dept_id) references `workflow`.`department`(dept_id)
 
 CREATE TABLE `workflow`.`level_master` (
   `level_id` INT NOT NULL AUTO_INCREMENT,
-  `desc` VARCHAR(45) NOT NULL,
+  `name` VARCHAR(45) NOT NULL UNIQUE,
+  `description` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`level_id`));
   
 CREATE TABLE `workflow`.`layer_master` (
   `layer_id` INT NOT NULL AUTO_INCREMENT,
-  `desc` VARCHAR(45) NOT NULL,
+  `name` VARCHAR(45) NOT NULL UNIQUE,
+  `description` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`layer_id`));
   
 CREATE TABLE `workflow`.`status_master` (
@@ -108,3 +110,7 @@ INSERT INTO phonetbl ( email_id, org_id, phone) VALUES ('bill@microsoft.com','1'
 INSERT INTO user ( email_id, org_id, password, address, dept_id, role_id ) VALUES ('parth@microsoft.com','1','admin','111 E San','1','2');
 INSERT INTO phonetbl ( email_id, org_id, phone) VALUES ('parth@microsoft.com','1','0123456789');
 INSERT INTO phonetbl ( email_id, org_id, phone) VALUES ('parth@microsoft.com','1','1234567890');
+INSERT INTO request_type ( name, email_id, org_id ) VALUES ('code review','bill@microsoft.com','1');
+INSERT INTO level_master ( name, description ) VALUES ('Level 0','requester-level');
+INSERT INTO layer_master ( name, description ) VALUES ('Layer 0','First Worker');
+INSERT INTO status_master ( name, description ) VALUES ('Pending','Request is in pending state.');

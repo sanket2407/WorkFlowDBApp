@@ -23,7 +23,7 @@ constraint fk1 FOREIGN KEY(org_id) references `workflow`.`organization`(org_id))
 
 
 CREATE TABLE `workflow`.`user` (
-  `email_id` VARCHAR(45) NOT NULL,
+  `email_id` VARCHAR(45) NOT NULL UNIQUE,
   `org_id` INT NOT NULL AUTO_INCREMENT,
   `password` VARCHAR(45) NOT NULL,
   `address` VARCHAR(600) NOT NULL,
@@ -99,3 +99,4 @@ INSERT INTO organization ( name, address, admin_email, password ) VALUES ('Micro
 INSERT INTO department ( name, org_id ) VALUES ('Software','1');
 INSERT INTO role ( name) VALUES ('depart_admin');
 INSERT INTO role ( name) VALUES ('user');
+INSERT INTO user ( email_id, org_id, password, address, dept_id, role_id ) VALUES ('bill@microsoft.com','1','admin','101 E San','1','1');

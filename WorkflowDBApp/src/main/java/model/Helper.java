@@ -58,6 +58,51 @@ public class Helper {
 		return org_id;
 	}
 	
+	public int getOrgIDFromOrgName(String org_name){
+
+		int org_id = -1;
+		dbCon = new DBConnection();
+		conn = dbCon.getConnection();
+		Statement stmt = null;
+		
+		try {
+
+			stmt = conn.createStatement();
+			String sql;
+			sql = "SELECT org_id FROM organization where name='" + org_name + "'";
+			ResultSet rs = stmt.executeQuery(sql);
+			System.out.println(sql);
+			while (rs.next()) {
+				// Retrieve by column name
+				System.out.println(">>> getOrgIDFromAdminEmail returned: "+ rs.getInt("org_id"));
+				return rs.getInt("org_id");
+			}
+		
+			rs.close();
+			stmt.close();
+			conn.close();
+		} catch (Exception e) {
+			// Handle errors for Class.forName
+			e.printStackTrace();
+		} finally {
+			// finally block used to close resources
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException se1) {
+				se1.printStackTrace();
+			} // nothing we can do
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException se2) {
+				se2.printStackTrace();
+			} // end finally try
+		} // end try
+		
+		return org_id;
+	}
+	
 	public int getDeptIDFromDeptName(String dept_name){
 		int dept_id = -1;
 		dbCon = new DBConnection();
@@ -112,7 +157,7 @@ public class Helper {
 
 			stmt = conn.createStatement();
 			String sql;
-			sql = "SELECT role_id FROM department where name='" + role_name + "'";
+			sql = "SELECT role_id FROM role where name='" + role_name + "'";
 			ResultSet rs = stmt.executeQuery(sql);
 			System.out.println(sql);
 			while (rs.next()) {

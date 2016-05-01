@@ -50,9 +50,13 @@ CREATE TABLE `workflow`.`status_master` (
   `description` varchar(6000),
 PRIMARY KEY(`status_id`));
 
-CREATE TABLE `workflow`.`request_type_master` (
+CREATE TABLE `workflow`.`request_type` (
   `request_type_id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL,
+  `email_id` VARCHAR(45) NOT NULL,
+  `org_id` INT NOT NULL,
+UNIQUE(email_id, org_id, name),
+constraint fk5 FOREIGN KEY (email_id,org_id) references `workflow`.`user`(email_id,org_id), 
 PRIMARY KEY(`request_type_id`));
 
 CREATE TABLE `workflow`.`workflow_master` (
@@ -60,7 +64,7 @@ CREATE TABLE `workflow`.`workflow_master` (
   `description` VARCHAR (600) NOT NULL,
   `request_type_id` INT,
 PRIMARY KEY(`workflow_id`),
-constraint fk5 FOREIGN KEY (request_type_id) references `workflow`.`request_type_master`(request_type_id));
+constraint fk6 FOREIGN KEY (request_type_id) references `workflow`.`request_type`(request_type_id));
 
 CREATE TABLE `workflow`.`workflowtbl` (
   `workflow_id` INT NOT NULL AUTO_INCREMENT,
@@ -71,9 +75,9 @@ CREATE TABLE `workflow`.`workflowtbl` (
   `description` VARCHAR (600) NOT NULL,
   `request_type_id` INT,
 PRIMARY KEY(`workflow_id`),
-constraint fk6 FOREIGN KEY (level_id) references `workflow`.`level_master`(level_id),
-constraint fk7 FOREIGN KEY (email_id,org_id) references `workflow`.`user`(email_id,org_id),
-constraint fk8 FOREIGN KEY (layer_id) references `workflow`.`layer_master`(layer_id));
+constraint fk7 FOREIGN KEY (level_id) references `workflow`.`level_master`(level_id),
+constraint fk8 FOREIGN KEY (email_id,org_id) references `workflow`.`user`(email_id,org_id),
+constraint fk9 FOREIGN KEY (layer_id) references `workflow`.`layer_master`(layer_id));
 
 CREATE TABLE `workflow`.`workflowinstance` (
   `workflow_instance_id` INT NOT NULL AUTO_INCREMENT,
@@ -82,25 +86,25 @@ CREATE TABLE `workflow`.`workflowinstance` (
   `status_id` INT NOT NULL,
   `layer_id` INT NOT NULL,
 PRIMARY KEY(`workflow_instance_id`),
-constraint fk9 FOREIGN KEY (level_id) references `workflow`.`level_master`(level_id),
-constraint fk10 FOREIGN KEY (status_id) references `workflow`.`status_master`(status_id),
-constraint fk11 FOREIGN KEY (layer_id) references `workflow`.`layer_master`(layer_id),
-constraint fk12 FOREIGN KEY (workflow_id) references `workflow`.`workflow_master`(workflow_id));
+constraint fk10 FOREIGN KEY (level_id) references `workflow`.`level_master`(level_id),
+constraint fk11 FOREIGN KEY (status_id) references `workflow`.`status_master`(status_id),
+constraint fk12 FOREIGN KEY (layer_id) references `workflow`.`layer_master`(layer_id),
+constraint fk13 FOREIGN KEY (workflow_id) references `workflow`.`workflow_master`(workflow_id));
 
 CREATE TABLE `workflow`.`phonetbl` (
   `email_id` varchar(45) NOT NULL,
   `org_id` INT NOT NULL,
   `phone` varchar(10) NOT NULL,
-  constraint fk13 FOREIGN KEY (email_id,org_id) references `workflow`.`user`(email_id,org_id));
+  constraint fk14 FOREIGN KEY (email_id,org_id) references `workflow`.`user`(email_id,org_id));
   
 USE workflow;  
 INSERT INTO organization ( name, address, admin_email, password ) VALUES ('Microsoft','Seattle','micro@micro.com','admin');  
 INSERT INTO department ( name, org_id ) VALUES ('Software','1');
 INSERT INTO role ( name) VALUES ('depart_admin');
 INSERT INTO role ( name) VALUES ('user');
-INSERT INTO user ( email_id, org_id, password, address, dept_id, role_id ) VALUES ('bill@apple.com','1','admin','101 E San','1','1');
-INSERT INTO phonetbl ( email_id, org_id, phone) VALUES ('bill@apple.com','1','0123456789');
-INSERT INTO phonetbl ( email_id, org_id, phone) VALUES ('bill@apple.com','1','1234567890');
+INSERT INTO user ( email_id, org_id, password, address, dept_id, role_id ) VALUES ('bill@microsoft.com','1','admin','101 E San','1','1');
+INSERT INTO phonetbl ( email_id, org_id, phone) VALUES ('bill@microsoft.com','1','0123456789');
+INSERT INTO phonetbl ( email_id, org_id, phone) VALUES ('bill@microsoft.com','1','1234567890');
 INSERT INTO user ( email_id, org_id, password, address, dept_id, role_id ) VALUES ('parth@microsoft.com','1','admin','111 E San','1','2');
 INSERT INTO phonetbl ( email_id, org_id, phone) VALUES ('parth@microsoft.com','1','0123456789');
 INSERT INTO phonetbl ( email_id, org_id, phone) VALUES ('parth@microsoft.com','1','1234567890');

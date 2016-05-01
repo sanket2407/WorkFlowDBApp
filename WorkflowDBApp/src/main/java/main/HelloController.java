@@ -326,6 +326,78 @@ public class HelloController {
 		return new ResponseEntity<Object>(user, HttpStatus.OK);
 	}
 
+	
+	/*
+	 * { "email_id" : "bill@microsoft.com", "password" : "admin", "org_name":"Microsoft"}
+	 */
+	@RequestMapping(value = "/userLogin", method = RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity<Object> userLogin(@RequestBody User user) {
+		
+		Helper helper = new Helper();
+		DBConnection dbCon = new DBConnection();
+		Connection conn = dbCon.getConnection();
+		Statement stmt = null;
+		try {
+
+			System.out.println("Creating statement...");
+			stmt = conn.createStatement();
+			String sql;
+			
+			user.setOrg_id(helper.getOrgIDFromOrgName(user.getOrg_name()));
+			
+			sql = "SELECT password FROM user where email_id='" + user.getEmail_id() + "' and org_id=" + user.getOrg_id();
+			ResultSet rs = stmt.executeQuery(sql);
+			System.out.println(sql);
+			while (rs.next()) {
+				// Retrieve by column name
+				String pass = rs.getString("password");
+
+				if (pass.equals(user.getPassword())) {
+					return new ResponseEntity<Object>(user, HttpStatus.OK);
+				} else {
+					return new ResponseEntity<Object>("Invalid username or password!", HttpStatus.BAD_REQUEST);
+				}
+			}
+
+			rs.close();
+			stmt.close();
+			conn.close();
+		} catch (Exception e) {
+			// Handle errors for Class.forName
+			e.printStackTrace();
+			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		} finally {
+			// finally block used to close resources
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException se1) {
+				se1.printStackTrace();
+				return new ResponseEntity<Object>(se1.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+			} // nothing we can do
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException se2) {
+				se2.printStackTrace();
+				return new ResponseEntity<Object>(se2.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+			} // end finally try
+		} // end try
+		return new ResponseEntity<Object>("Invalid username or password!", HttpStatus.BAD_REQUEST);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	@RequestMapping(value = "/test", method = RequestMethod.POST)
 	@ResponseBody
 	public ResponseEntity<Object> test(@RequestBody Test test) {

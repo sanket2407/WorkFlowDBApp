@@ -466,7 +466,7 @@ public class HelloController {
 			stmt = conn.createStatement();
 			String sql;
 
-			sql = "INSERT INTO level_master ( name, description ) VALUES ('" + level.getLevel_name()
+			sql = "INSERT INTO level ( name, description ) VALUES ('" + level.getLevel_name()
 					+ "','" + level.getDescription() + "')";
 
 			System.out.println(sql);
@@ -515,7 +515,7 @@ public class HelloController {
 			stmt = conn.createStatement();
 			String sql;
 
-			sql = "INSERT INTO layer_master ( name, description ) VALUES ('" + layer.getLayer_name()
+			sql = "INSERT INTO layer ( name, description ) VALUES ('" + layer.getLayer_name()
 					+ "','" + layer.getDescription() + "')";
 
 			System.out.println(sql);
@@ -564,7 +564,7 @@ public class HelloController {
 			stmt = conn.createStatement();
 			String sql;
 
-			sql = "INSERT INTO status_master ( name, description ) VALUES ('" + status.getStatus_name()
+			sql = "INSERT INTO status ( name, description ) VALUES ('" + status.getStatus_name()
 					+ "','" + status.getDescription() + "')";
 
 			System.out.println(sql);

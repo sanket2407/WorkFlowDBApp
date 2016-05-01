@@ -34,19 +34,19 @@ constraint fk2 FOREIGN KEY (org_id) references `workflow`.`organization`(org_id)
 constraint fk3 FOREIGN KEY (role_id) references `workflow`.`role`(role_id),
 constraint fk4 FOREIGN KEY (dept_id) references `workflow`.`department`(dept_id));
 
-CREATE TABLE `workflow`.`level_master` (
+CREATE TABLE `workflow`.`level` (
   `level_id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL UNIQUE,
   `description` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`level_id`));
   
-CREATE TABLE `workflow`.`layer_master` (
+CREATE TABLE `workflow`.`layer` (
   `layer_id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL UNIQUE,
   `description` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`layer_id`));
   
-CREATE TABLE `workflow`.`status_master` (
+CREATE TABLE `workflow`.`status` (
   `status_id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL,
   `description` varchar(6000),
@@ -65,7 +65,10 @@ CREATE TABLE `workflow`.`workflow_master` (
   `workflow_id` INT NOT NULL AUTO_INCREMENT,
   `description` VARCHAR (600) NOT NULL,
   `request_type_id` INT,
+  `email_id` VARCHAR(45) NOT NULL,
+  `org_id` INT NOT NULL,
 PRIMARY KEY(`workflow_id`),
+constraint fk15 FOREIGN KEY (email_id,org_id) references `workflow`.`user`(email_id,org_id),
 constraint fk6 FOREIGN KEY (request_type_id) references `workflow`.`request_type`(request_type_id));
 
 CREATE TABLE `workflow`.`workflowtbl` (
@@ -77,9 +80,9 @@ CREATE TABLE `workflow`.`workflowtbl` (
   `description` VARCHAR (600) NOT NULL,
   `request_type_id` INT,
 PRIMARY KEY(`workflow_id`),
-constraint fk7 FOREIGN KEY (level_id) references `workflow`.`level_master`(level_id),
+constraint fk7 FOREIGN KEY (level_id) references `workflow`.`level`(level_id),
 constraint fk8 FOREIGN KEY (email_id,org_id) references `workflow`.`user`(email_id,org_id),
-constraint fk9 FOREIGN KEY (layer_id) references `workflow`.`layer_master`(layer_id));
+constraint fk9 FOREIGN KEY (layer_id) references `workflow`.`layer`(layer_id));
 
 CREATE TABLE `workflow`.`workflowinstance` (
   `workflow_instance_id` INT NOT NULL AUTO_INCREMENT,
@@ -88,9 +91,9 @@ CREATE TABLE `workflow`.`workflowinstance` (
   `status_id` INT NOT NULL,
   `layer_id` INT NOT NULL,
 PRIMARY KEY(`workflow_instance_id`),
-constraint fk10 FOREIGN KEY (level_id) references `workflow`.`level_master`(level_id),
-constraint fk11 FOREIGN KEY (status_id) references `workflow`.`status_master`(status_id),
-constraint fk12 FOREIGN KEY (layer_id) references `workflow`.`layer_master`(layer_id),
+constraint fk10 FOREIGN KEY (level_id) references `workflow`.`level`(level_id),
+constraint fk11 FOREIGN KEY (status_id) references `workflow`.`status`(status_id),
+constraint fk12 FOREIGN KEY (layer_id) references `workflow`.`layer`(layer_id),
 constraint fk13 FOREIGN KEY (workflow_id) references `workflow`.`workflow_master`(workflow_id));
 
 CREATE TABLE `workflow`.`phonetbl` (
@@ -111,6 +114,6 @@ INSERT INTO user ( email_id, org_id, password, address, dept_id, role_id ) VALUE
 INSERT INTO phonetbl ( email_id, org_id, phone) VALUES ('parth@microsoft.com','1','0123456789');
 INSERT INTO phonetbl ( email_id, org_id, phone) VALUES ('parth@microsoft.com','1','1234567890');
 INSERT INTO request_type ( name, email_id, org_id ) VALUES ('code review','bill@microsoft.com','1');
-INSERT INTO level_master ( name, description ) VALUES ('Level 0','requester-level');
-INSERT INTO layer_master ( name, description ) VALUES ('Layer 0','First Worker');
-INSERT INTO status_master ( name, description ) VALUES ('Pending','Request is in pending state.');
+INSERT INTO level ( name, description ) VALUES ('Level 0','requester-level');
+INSERT INTO layer ( name, description ) VALUES ('Layer 0','First Worker');
+INSERT INTO status ( name, description ) VALUES ('Pending','Request is in pending state.');

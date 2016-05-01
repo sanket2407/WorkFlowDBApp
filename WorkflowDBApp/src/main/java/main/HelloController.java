@@ -21,6 +21,7 @@ import databaseConnection.DBConnection;
 import model.Department;
 import model.Helper;
 import model.Organization;
+import model.RequestType;
 import model.Role;
 import model.Test;
 import model.User;
@@ -257,7 +258,7 @@ public class HelloController {
 	 */
 	@RequestMapping(value = "/userSignUp", method = RequestMethod.POST)
 	@ResponseBody
-	public ResponseEntity<Object> test(@RequestBody User user) {
+	public ResponseEntity<Object> userSignUp(@RequestBody User user) {
 
 		Helper helper = new Helper();
 
@@ -326,14 +327,14 @@ public class HelloController {
 		return new ResponseEntity<Object>(user, HttpStatus.OK);
 	}
 
-	
 	/*
-	 * { "email_id" : "bill@microsoft.com", "password" : "admin", "org_name":"Microsoft"}
+	 * { "email_id" : "bill@microsoft.com", "password" : "admin",
+	 * "org_name":"Microsoft"}
 	 */
 	@RequestMapping(value = "/userLogin", method = RequestMethod.POST)
 	@ResponseBody
 	public ResponseEntity<Object> userLogin(@RequestBody User user) {
-		
+
 		Helper helper = new Helper();
 		DBConnection dbCon = new DBConnection();
 		Connection conn = dbCon.getConnection();
@@ -343,10 +344,11 @@ public class HelloController {
 			System.out.println("Creating statement...");
 			stmt = conn.createStatement();
 			String sql;
-			
+
 			user.setOrg_id(helper.getOrgIDFromOrgName(user.getOrg_name()));
-			
-			sql = "SELECT password FROM user where email_id='" + user.getEmail_id() + "' and org_id=" + user.getOrg_id();
+
+			sql = "SELECT password FROM user where email_id='" + user.getEmail_id() + "' and org_id="
+					+ user.getOrg_id();
 			ResultSet rs = stmt.executeQuery(sql);
 			System.out.println(sql);
 			while (rs.next()) {
@@ -386,9 +388,65 @@ public class HelloController {
 		} // end try
 		return new ResponseEntity<Object>("Invalid username or password!", HttpStatus.BAD_REQUEST);
 	}
-	
-	
-	
+
+	/*
+	 * { "email_id" : "bill@microsoft.com", "request_type_name" : "code review",
+	 * "org_name":"Microsoft"}
+	 */
+	@RequestMapping(value = "/createRequestType", method = RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity<Object> createRequestType(@RequestBody RequestType requestType) {
+
+		Helper helper = new Helper();
+
+		DBConnection dbCon = new DBConnection();
+		Connection conn = dbCon.getConnection();
+		Statement stmt = null;
+		try {
+
+			System.out.println("Creating statement...");
+			stmt = conn.createStatement();
+			String sql;
+
+			requestType.setOrg_id(helper.getOrgIDFromOrgName(requestType.getOrg_name()));
+
+			if (requestType.getOrg_id() == -1) {
+				return new ResponseEntity<Object>("Organization not exists", HttpStatus.INTERNAL_SERVER_ERROR);
+			} else {
+				sql = "INSERT INTO request_type ( name, email_id, org_id ) VALUES ('" + requestType.getRequest_type_name()
+						+ "','" + requestType.getEmail_id() + "','" + requestType.getOrg_id() + "')";
+
+				System.out.println(sql);
+				stmt.executeUpdate(sql);
+
+			}
+			stmt.close();
+			conn.close();
+		} catch (Exception e) {
+			// Handle errors for Class.forName
+			e.printStackTrace();
+			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		} finally {
+			// finally block used to close resources
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException se1) {
+				se1.printStackTrace();
+				return new ResponseEntity<Object>(se1.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+			} // nothing we can do
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException se2) {
+				se2.printStackTrace();
+				return new ResponseEntity<Object>(se2.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+			} // end finally try
+		} // end try
+
+		return new ResponseEntity<Object>(requestType, HttpStatus.OK);
+	}
+
 	
 	
 	

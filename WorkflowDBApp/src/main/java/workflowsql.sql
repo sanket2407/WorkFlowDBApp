@@ -67,8 +67,10 @@ CREATE TABLE `workflow`.`workflow_master` (
   `request_type_id` INT,
   `email_id` VARCHAR(45) NOT NULL,
   `org_id` INT NOT NULL,
+  `dept_id` INT NOT NULL,
 PRIMARY KEY(`workflow_id`),
 constraint fk15 FOREIGN KEY (email_id,org_id) references `workflow`.`user`(email_id,org_id),
+constraint fk16 FOREIGN KEY (dept_id) references `workflow`.`department`(dept_id),
 constraint fk6 FOREIGN KEY (request_type_id) references `workflow`.`request_type`(request_type_id));
 
 CREATE TABLE `workflow`.`workflowtbl` (
@@ -117,3 +119,4 @@ INSERT INTO request_type ( name, email_id, org_id ) VALUES ('code review','bill@
 INSERT INTO level ( name, description ) VALUES ('Level 0','requester-level');
 INSERT INTO layer ( name, description ) VALUES ('Layer 0','First Worker');
 INSERT INTO status ( name, description ) VALUES ('Pending','Request is in pending state.');
+INSERT INTO workflow_master ( description, request_type_id, email_id, org_id, dept_id ) VALUES ('Code review request for Bill','1','bill@microsoft.com','1','1');

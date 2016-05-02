@@ -27,6 +27,7 @@ import model.Role;
 import model.Status;
 import model.Test;
 import model.User;
+import model.Workflow;
 
 @RestController
 public class HelloController {
@@ -466,8 +467,8 @@ public class HelloController {
 			stmt = conn.createStatement();
 			String sql;
 
-			sql = "INSERT INTO level ( name, description ) VALUES ('" + level.getLevel_name()
-					+ "','" + level.getDescription() + "')";
+			sql = "INSERT INTO level ( name, description ) VALUES ('" + level.getLevel_name() + "','"
+					+ level.getDescription() + "')";
 
 			System.out.println(sql);
 			stmt.executeUpdate(sql);
@@ -515,8 +516,8 @@ public class HelloController {
 			stmt = conn.createStatement();
 			String sql;
 
-			sql = "INSERT INTO layer ( name, description ) VALUES ('" + layer.getLayer_name()
-					+ "','" + layer.getDescription() + "')";
+			sql = "INSERT INTO layer ( name, description ) VALUES ('" + layer.getLayer_name() + "','"
+					+ layer.getDescription() + "')";
 
 			System.out.println(sql);
 			stmt.executeUpdate(sql);
@@ -547,9 +548,10 @@ public class HelloController {
 
 		return new ResponseEntity<Object>(layer, HttpStatus.OK);
 	}
-	
+
 	/*
-	 * { "status_name" : "Pending", "description" : "Request is in pending state." }
+	 * { "status_name" : "Pending", "description" :
+	 * "Request is in pending state." }
 	 */
 	@RequestMapping(value = "/createStatus", method = RequestMethod.POST)
 	@ResponseBody
@@ -564,8 +566,8 @@ public class HelloController {
 			stmt = conn.createStatement();
 			String sql;
 
-			sql = "INSERT INTO status ( name, description ) VALUES ('" + status.getStatus_name()
-					+ "','" + status.getDescription() + "')";
+			sql = "INSERT INTO status ( name, description ) VALUES ('" + status.getStatus_name() + "','"
+					+ status.getDescription() + "')";
 
 			System.out.println(sql);
 			stmt.executeUpdate(sql);
@@ -596,13 +598,82 @@ public class HelloController {
 
 		return new ResponseEntity<Object>(status, HttpStatus.OK);
 	}
+
+	/*
+	 * { "email_id" : "bill@microsoft.com", "request_type_name" : "code review",
+	 * "org_name":"Microsoft", "description" : "Code review request for Bill",
+	 * "department_name" : "Software" }
+	 */
+	@RequestMapping(value = "/createWorkflow", method = RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity<Object> createWorkflow(@RequestBody Workflow workflow) {
+
+		Helper helper = new Helper();
+		DBConnection dbCon = new DBConnection();
+		Connection conn = dbCon.getConnection();
+		Statement stmt = null;
+		try {
+
+			workflow.setDept_id(helper.getDeptIDFromDeptName(workflow.getDepartment_name()));
+			workflow.setOrg_id(helper.getOrgIDFromOrgName(workflow.getOrg_name()));
+			workflow.setRequest_type_id(helper.getRequestTypeIDFromRequestTypeName(workflow.getRequest_type_name()));
+
+			System.out.println("Creating statement...");
+			stmt = conn.createStatement();
+			String sql;
+
+			sql = "INSERT INTO workflow_master ( description, request_type_id, email_id, org_id, dept_id ) VALUES ('"
+					+ workflow.getDescription() + "','" + workflow.getRequest_type_id() + "','" + workflow.getEmail_id()
+					+ "','" + workflow.getOrg_id() + "','" + workflow.getDept_id() + "')";
+
+			System.out.println(sql);
+			stmt.executeUpdate(sql);
+
+			stmt.close();
+			conn.close();
+		} catch (Exception e) {
+			// Handle errors for Class.forName
+			e.printStackTrace();
+			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		} finally {
+			// finally block used to close resources
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException se1) {
+				se1.printStackTrace();
+				return new ResponseEntity<Object>(se1.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+			} // nothing we can do
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException se2) {
+				se2.printStackTrace();
+				return new ResponseEntity<Object>(se2.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+			} // end finally try
+		} // end try
+
+		return new ResponseEntity<Object>(workflow, HttpStatus.OK);
+	}
+	
+	/*
+	 /createWorkflow
+	 /addIntoWorkflow
+	 /select based on user id
+	 /select based on department admin
+	 /select based on workflow id
+	 
+	 /create request
+	 /actionOnWorkflow
+	 */
 	
 	
 	
 	
 	
-	
-	
+
+	// ==========================================================
+
 	@RequestMapping(value = "/test", method = RequestMethod.POST)
 	@ResponseBody
 	public ResponseEntity<Object> test(@RequestBody Test test) {

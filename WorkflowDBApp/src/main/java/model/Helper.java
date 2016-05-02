@@ -191,6 +191,50 @@ public class Helper {
 		return role_id;
 	}
 	
+	public int getRequestTypeIDFromRequestTypeName(String requestType_name){
+		int request_type_id = -1;
+		dbCon = new DBConnection();
+		conn = dbCon.getConnection();
+		Statement stmt = null;
+		
+		try {
+
+			stmt = conn.createStatement();
+			String sql;
+			sql = "SELECT request_type_id FROM request_type where name='" + requestType_name + "'";
+			ResultSet rs = stmt.executeQuery(sql);
+			System.out.println(sql);
+			while (rs.next()) {
+				// Retrieve by column name
+				System.out.println(">>> getRequestTypeIDFromRequestTypeName returned: "+ rs.getInt("request_type_id"));
+				return rs.getInt("request_type_id");
+			}
+		
+			rs.close();
+			stmt.close();
+			conn.close();
+		} catch (Exception e) {
+			// Handle errors for Class.forName
+			e.printStackTrace();
+		} finally {
+			// finally block used to close resources
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException se1) {
+				se1.printStackTrace();
+			} // nothing we can do
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException se2) {
+				se2.printStackTrace();
+			} // end finally try
+		} // end try
+		
+		return request_type_id;
+	}
+	
 	
 
 }

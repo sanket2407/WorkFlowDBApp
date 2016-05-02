@@ -629,6 +629,33 @@ public class HelloController {
 			System.out.println(sql);
 			stmt.executeUpdate(sql);
 
+			// get newly created workflow id from database.
+
+			sql = "SELECT workflow_id FROM workflow_master where request_type_id=" + workflow.getRequest_type_id()
+					+ " and email_id = '" + workflow.getEmail_id() + "' and org_id = '" + workflow.getOrg_id()
+					+ "' and dept_id= '" + workflow.getDept_id() + "'";
+
+			ResultSet rs = stmt.executeQuery(sql);
+
+			// STEP 5: Extract data from result set
+			while (rs.next()) {
+				// Retrieve by column name
+				int workflow_id = rs.getInt("workflow_id");
+				System.out.println("created workflow id is: "+ workflow_id);
+				workflow.setWorkflow_id(workflow_id);
+			}
+			
+			workflow.setLevel_id(helper.getLevelIDFromLevelName("Level 0"));
+			workflow.setLayer_id(helper.getLayerIDFromLayerName("Layer 0"));
+			
+			sql = "INSERT INTO workflowtbl ( workflow_id, level_id, email_id, org_id, layer_id, description ) VALUES ("
+					+ "'" + workflow.getWorkflow_id() + "','" + workflow.getLevel_id() + "','"
+					+ workflow.getEmail_id() + "','" + workflow.getOrg_id() + "','"
+					+ workflow.getLayer_id() + "','" + workflow.getDescription() + "')";
+			
+			System.out.println(sql);
+			stmt.executeUpdate(sql);
+
 			stmt.close();
 			conn.close();
 		} catch (Exception e) {
@@ -657,14 +684,7 @@ public class HelloController {
 	}
 
 	/*
-	 * /addIntoWorkflow /select based on user id /select based on department
-	 * admin /select based on workflow id
-	 * 
-	 * /create request /actionOnWorkflow
-	 */
-
-	/*
-	 * { "workflow_id" : "1", "worker_email_id" : "bill@microsoft.com",
+	 * { "workflow_id" : "1", "worker_email_id" : "chinu@microsoft.com",
 	 * "worker_org_name":"Microsoft", "description" :
 	 * "level 1 for code review workflow", "level_name": "Level 1"}
 	 */
@@ -677,20 +697,20 @@ public class HelloController {
 		Connection conn = dbCon.getConnection();
 		Statement stmt = null;
 		try {
-			
+
 			workflow.setWorker_org_id(helper.getOrgIDFromOrgName(workflow.getWorker_org_name()));
 			workflow.setOrg_id(helper.getOrgIDFromOrgName(workflow.getOrg_name()));
 			workflow.setLevel_id(helper.getLevelIDFromLevelName(workflow.getLevel_name()));
-			workflow.setLayer_id(helper.getLayerIDFromLayerName("Layer 1"));
-			
+			workflow.setLayer_id(helper.getLayerIDFromLayerName("Layer 0"));
+
 			System.out.println("Creating statement...");
 			stmt = conn.createStatement();
 			String sql;
 
 			sql = "INSERT INTO workflowtbl ( workflow_id, level_id, email_id, org_id, layer_id, description ) VALUES ("
-					+ "'" + workflow.getWorkflow_id() + "','" + workflow.getLevel_id() + "','" + workflow.getWorker_email_id()
-					+ "','" + workflow.getWorker_org_id() + "','" + workflow.getLayer_id() + "','" + workflow.getDescription()
-					+ "')";
+					+ "'" + workflow.getWorkflow_id() + "','" + workflow.getLevel_id() + "','"
+					+ workflow.getWorker_email_id() + "','" + workflow.getWorker_org_id() + "','"
+					+ workflow.getLayer_id() + "','" + workflow.getDescription() + "')";
 
 			System.out.println(sql);
 			stmt.executeUpdate(sql);
@@ -725,7 +745,8 @@ public class HelloController {
 	/*
 	 * { "workflow_id" : "1", "worker_email_id" : "parth@microsoft.com",
 	 * "worker_org_name":"Microsoft", "description" :
-	 * "layer 2 for code review workflow", "level_name": "Level 1", "layer_name": "Layer 2"}
+	 * "layer 1 for code review workflow for level 1", "level_name": "Level 1",
+	 * "layer_name": "Layer 1"}
 	 */
 	@RequestMapping(value = "/addLayerIntoWorkflow", method = RequestMethod.POST)
 	@ResponseBody
@@ -736,7 +757,7 @@ public class HelloController {
 		Connection conn = dbCon.getConnection();
 		Statement stmt = null;
 		try {
-			
+
 			workflow.setWorker_org_id(helper.getOrgIDFromOrgName(workflow.getWorker_org_name()));
 			workflow.setOrg_id(helper.getOrgIDFromOrgName(workflow.getOrg_name()));
 			workflow.setLevel_id(helper.getLevelIDFromLevelName(workflow.getLevel_name()));
@@ -747,9 +768,9 @@ public class HelloController {
 			String sql;
 
 			sql = "INSERT INTO workflowtbl ( workflow_id, level_id, email_id, org_id, layer_id, description ) VALUES ("
-					+ "'" + workflow.getWorkflow_id() + "','" + workflow.getLevel_id() + "','" + workflow.getWorker_email_id()
-					+ "','" + workflow.getWorker_org_id() + "','" + workflow.getLayer_id() + "','" + workflow.getDescription()
-					+ "')";
+					+ "'" + workflow.getWorkflow_id() + "','" + workflow.getLevel_id() + "','"
+					+ workflow.getWorker_email_id() + "','" + workflow.getWorker_org_id() + "','"
+					+ workflow.getLayer_id() + "','" + workflow.getDescription() + "')";
 
 			System.out.println(sql);
 			stmt.executeUpdate(sql);
@@ -780,9 +801,11 @@ public class HelloController {
 
 		return new ResponseEntity<Object>(workflow, HttpStatus.OK);
 	}
-	
-	
-	
+
+	/*
+	 * /create request
+	 */
+
 	// ==========================================================
 
 	@RequestMapping(value = "/test", method = RequestMethod.POST)

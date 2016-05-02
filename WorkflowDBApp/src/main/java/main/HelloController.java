@@ -22,6 +22,7 @@ import model.Helper;
 import model.Layer;
 import model.Level;
 import model.Organization;
+import model.Request;
 import model.RequestType;
 import model.Role;
 import model.Status;
@@ -550,8 +551,8 @@ public class HelloController {
 	}
 
 	/*
-	 * { "status_name" : "Pending", "description" :
-	 * "Request is in pending state." }
+	 * { "status_name" : "Requested", "description" :
+	 * "Request is in requested state." }
 	 */
 	@RequestMapping(value = "/createStatus", method = RequestMethod.POST)
 	@ResponseBody
@@ -641,18 +642,18 @@ public class HelloController {
 			while (rs.next()) {
 				// Retrieve by column name
 				int workflow_id = rs.getInt("workflow_id");
-				System.out.println("created workflow id is: "+ workflow_id);
+				System.out.println("created workflow id is: " + workflow_id);
 				workflow.setWorkflow_id(workflow_id);
 			}
-			
+
 			workflow.setLevel_id(helper.getLevelIDFromLevelName("Level 0"));
 			workflow.setLayer_id(helper.getLayerIDFromLayerName("Layer 0"));
-			
+
 			sql = "INSERT INTO workflowtbl ( workflow_id, level_id, email_id, org_id, layer_id, description ) VALUES ("
-					+ "'" + workflow.getWorkflow_id() + "','" + workflow.getLevel_id() + "','"
-					+ workflow.getEmail_id() + "','" + workflow.getOrg_id() + "','"
-					+ workflow.getLayer_id() + "','" + workflow.getDescription() + "')";
-			
+					+ "'" + workflow.getWorkflow_id() + "','" + workflow.getLevel_id() + "','" + workflow.getEmail_id()
+					+ "','" + workflow.getOrg_id() + "','" + workflow.getLayer_id() + "','" + workflow.getDescription()
+					+ "')";
+
 			System.out.println(sql);
 			stmt.executeUpdate(sql);
 
@@ -803,8 +804,61 @@ public class HelloController {
 	}
 
 	/*
-	 * /create request
+	 * { "workflow_id" : "1", "email_id" : "chinu@microsoft.com",
+	 * "org_name":"Microsoft", "status_name": "Requested"}
 	 */
+	@RequestMapping(value = "/doRequest", method = RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity<Object> doRequest(@RequestBody Request request) {
+
+		Helper helper = new Helper();
+		DBConnection dbCon = new DBConnection();
+		Connection conn = dbCon.getConnection();
+		Statement stmt = null;
+		try {
+
+			request.setLevel_id(helper.getLevelIDFromLevelName(request.getLevel_name()));
+			request.setLayer_id(helper.getLayerIDFromLayerName(request.getLayer_name()));
+			request.setStatus_id(helper.getStatusIDFromStatusName(request.getStatus_name()));
+			request.setDescription("Request initiated !");
+
+			System.out.println("Creating statement...");
+			stmt = conn.createStatement();
+			String sql;
+
+			sql = "INSERT INTO workflowinstance ( workflow_id, level_id, layer_id, status_id, description ) VALUES (" + "'"
+					+ request.getWorkflow_id() + "','" + request.getLevel_id() + "','" + request.getLayer_id() + "','"
+					+ request.getStatus_id() + "','" + request.getDescription() + "')";
+
+			System.out.println(sql);
+			stmt.executeUpdate(sql);
+
+			stmt.close();
+			conn.close();
+		} catch (Exception e) {
+			// Handle errors for Class.forName
+			e.printStackTrace();
+			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		} finally {
+			// finally block used to close resources
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException se1) {
+				se1.printStackTrace();
+				return new ResponseEntity<Object>(se1.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+			} // nothing we can do
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException se2) {
+				se2.printStackTrace();
+				return new ResponseEntity<Object>(se2.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+			} // end finally try
+		} // end try
+
+		return new ResponseEntity<Object>(request, HttpStatus.OK);
+	}
 
 	// ==========================================================
 

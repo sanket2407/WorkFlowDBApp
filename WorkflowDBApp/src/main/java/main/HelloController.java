@@ -655,23 +655,134 @@ public class HelloController {
 
 		return new ResponseEntity<Object>(workflow, HttpStatus.OK);
 	}
-	
-	/*
-	 /createWorkflow
-	 /addIntoWorkflow
-	 /select based on user id
-	 /select based on department admin
-	 /select based on workflow id
-	 
-	 /create request
-	 /actionOnWorkflow
-	 */
-	
-	
-	
-	
-	
 
+	/*
+	 * /addIntoWorkflow /select based on user id /select based on department
+	 * admin /select based on workflow id
+	 * 
+	 * /create request /actionOnWorkflow
+	 */
+
+	/*
+	 * { "workflow_id" : "1", "worker_email_id" : "bill@microsoft.com",
+	 * "worker_org_name":"Microsoft", "description" :
+	 * "level 1 for code review workflow", "level_name": "Level 1"}
+	 */
+	@RequestMapping(value = "/addLevelIntoWorkflow", method = RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity<Object> addLevelIntoWorkflow(@RequestBody Workflow workflow) {
+
+		Helper helper = new Helper();
+		DBConnection dbCon = new DBConnection();
+		Connection conn = dbCon.getConnection();
+		Statement stmt = null;
+		try {
+			
+			workflow.setWorker_org_id(helper.getOrgIDFromOrgName(workflow.getWorker_org_name()));
+			workflow.setOrg_id(helper.getOrgIDFromOrgName(workflow.getOrg_name()));
+			workflow.setLevel_id(helper.getLevelIDFromLevelName(workflow.getLevel_name()));
+			workflow.setLayer_id(helper.getLayerIDFromLayerName("Layer 1"));
+			
+			System.out.println("Creating statement...");
+			stmt = conn.createStatement();
+			String sql;
+
+			sql = "INSERT INTO workflowtbl ( workflow_id, level_id, email_id, org_id, layer_id, description ) VALUES ("
+					+ "'" + workflow.getWorkflow_id() + "','" + workflow.getLevel_id() + "','" + workflow.getWorker_email_id()
+					+ "','" + workflow.getWorker_org_id() + "','" + workflow.getLayer_id() + "','" + workflow.getDescription()
+					+ "')";
+
+			System.out.println(sql);
+			stmt.executeUpdate(sql);
+
+			stmt.close();
+			conn.close();
+		} catch (Exception e) {
+			// Handle errors for Class.forName
+			e.printStackTrace();
+			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		} finally {
+			// finally block used to close resources
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException se1) {
+				se1.printStackTrace();
+				return new ResponseEntity<Object>(se1.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+			} // nothing we can do
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException se2) {
+				se2.printStackTrace();
+				return new ResponseEntity<Object>(se2.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+			} // end finally try
+		} // end try
+
+		return new ResponseEntity<Object>(workflow, HttpStatus.OK);
+	}
+
+	/*
+	 * { "workflow_id" : "1", "worker_email_id" : "parth@microsoft.com",
+	 * "worker_org_name":"Microsoft", "description" :
+	 * "layer 2 for code review workflow", "level_name": "Level 1", "layer_name": "Layer 2"}
+	 */
+	@RequestMapping(value = "/addLayerIntoWorkflow", method = RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity<Object> addLayerIntoWorkflow(@RequestBody Workflow workflow) {
+
+		Helper helper = new Helper();
+		DBConnection dbCon = new DBConnection();
+		Connection conn = dbCon.getConnection();
+		Statement stmt = null;
+		try {
+			
+			workflow.setWorker_org_id(helper.getOrgIDFromOrgName(workflow.getWorker_org_name()));
+			workflow.setOrg_id(helper.getOrgIDFromOrgName(workflow.getOrg_name()));
+			workflow.setLevel_id(helper.getLevelIDFromLevelName(workflow.getLevel_name()));
+			workflow.setLayer_id(helper.getLayerIDFromLayerName(workflow.getLayer_name()));
+
+			System.out.println("Creating statement...");
+			stmt = conn.createStatement();
+			String sql;
+
+			sql = "INSERT INTO workflowtbl ( workflow_id, level_id, email_id, org_id, layer_id, description ) VALUES ("
+					+ "'" + workflow.getWorkflow_id() + "','" + workflow.getLevel_id() + "','" + workflow.getWorker_email_id()
+					+ "','" + workflow.getWorker_org_id() + "','" + workflow.getLayer_id() + "','" + workflow.getDescription()
+					+ "')";
+
+			System.out.println(sql);
+			stmt.executeUpdate(sql);
+
+			stmt.close();
+			conn.close();
+		} catch (Exception e) {
+			// Handle errors for Class.forName
+			e.printStackTrace();
+			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		} finally {
+			// finally block used to close resources
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException se1) {
+				se1.printStackTrace();
+				return new ResponseEntity<Object>(se1.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+			} // nothing we can do
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException se2) {
+				se2.printStackTrace();
+				return new ResponseEntity<Object>(se2.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+			} // end finally try
+		} // end try
+
+		return new ResponseEntity<Object>(workflow, HttpStatus.OK);
+	}
+	
+	
+	
 	// ==========================================================
 
 	@RequestMapping(value = "/test", method = RequestMethod.POST)

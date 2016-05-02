@@ -235,6 +235,93 @@ public class Helper {
 		return request_type_id;
 	}
 	
+	public int getLevelIDFromLevelName(String level_name){
+		int level_id = -1;
+		dbCon = new DBConnection();
+		conn = dbCon.getConnection();
+		Statement stmt = null;
+		
+		try {
+
+			stmt = conn.createStatement();
+			String sql;
+			sql = "SELECT level_id FROM level where name='" + level_name + "'";
+			ResultSet rs = stmt.executeQuery(sql);
+			System.out.println(sql);
+			while (rs.next()) {
+				// Retrieve by column name
+				System.out.println(">>> getRequestTypeIDFromRequestTypeName returned: "+ rs.getInt("level_id"));
+				return rs.getInt("level_id");
+			}
+		
+			rs.close();
+			stmt.close();
+			conn.close();
+		} catch (Exception e) {
+			// Handle errors for Class.forName
+			e.printStackTrace();
+		} finally {
+			// finally block used to close resources
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException se1) {
+				se1.printStackTrace();
+			} // nothing we can do
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException se2) {
+				se2.printStackTrace();
+			} // end finally try
+		} // end try
+		
+		return level_id;
+	}
+	
+	public int getLayerIDFromLayerName(String layer_name){
+		int layer_id = -1;
+		dbCon = new DBConnection();
+		conn = dbCon.getConnection();
+		Statement stmt = null;
+		
+		try {
+
+			stmt = conn.createStatement();
+			String sql;
+			sql = "SELECT layer_id FROM layer where name='" + layer_name + "'";
+			ResultSet rs = stmt.executeQuery(sql);
+			System.out.println(sql);
+			while (rs.next()) {
+				// Retrieve by column name
+				System.out.println(">>> getLayerIDFromLayerName returned: "+ rs.getInt("layer_id"));
+				return rs.getInt("layer_id");
+			}
+		
+			rs.close();
+			stmt.close();
+			conn.close();
+		} catch (Exception e) {
+			// Handle errors for Class.forName
+			e.printStackTrace();
+		} finally {
+			// finally block used to close resources
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException se1) {
+				se1.printStackTrace();
+			} // nothing we can do
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException se2) {
+				se2.printStackTrace();
+			} // end finally try
+		} // end try
+		
+		return layer_id;
+	}
 	
 
 }

@@ -74,14 +74,13 @@ constraint fk16 FOREIGN KEY (dept_id) references `workflow`.`department`(dept_id
 constraint fk6 FOREIGN KEY (request_type_id) references `workflow`.`request_type`(request_type_id));
 
 CREATE TABLE `workflow`.`workflowtbl` (
-  `workflow_id` INT NOT NULL AUTO_INCREMENT,
+  `workflow_id` INT NOT NULL,
   `level_id` INT NOT NULL,
   `email_id` VARCHAR(45) NOT NULL,
   `org_id` INT NOT NULL,
   `layer_id` INT NOT NULL,
   `description` VARCHAR (600) NOT NULL,
-  `request_type_id` INT,
-PRIMARY KEY(`workflow_id`),
+constraint fk17 FOREIGN KEY (workflow_id) references `workflow`.`workflow_master`(workflow_id),
 constraint fk7 FOREIGN KEY (level_id) references `workflow`.`level`(level_id),
 constraint fk8 FOREIGN KEY (email_id,org_id) references `workflow`.`user`(email_id,org_id),
 constraint fk9 FOREIGN KEY (layer_id) references `workflow`.`layer`(layer_id));
@@ -115,8 +114,22 @@ INSERT INTO phonetbl ( email_id, org_id, phone) VALUES ('bill@microsoft.com','1'
 INSERT INTO user ( email_id, org_id, password, address, dept_id, role_id ) VALUES ('parth@microsoft.com','1','admin','111 E San','1','2');
 INSERT INTO phonetbl ( email_id, org_id, phone) VALUES ('parth@microsoft.com','1','0123456789');
 INSERT INTO phonetbl ( email_id, org_id, phone) VALUES ('parth@microsoft.com','1','1234567890');
+INSERT INTO user ( email_id, org_id, password, address, dept_id, role_id ) VALUES ('chinu@microsoft.com','1','admin','111 E San','1','2');
+INSERT INTO phonetbl ( email_id, org_id, phone) VALUES ('chinu@microsoft.com','1','0123456789');
+INSERT INTO phonetbl ( email_id, org_id, phone) VALUES ('chinu@microsoft.com','1','1234567890');
+INSERT INTO user ( email_id, org_id, password, address, dept_id, role_id ) VALUES ('dharmik@microsoft.com','1','admin','111 E San','1','2');
+INSERT INTO phonetbl ( email_id, org_id, phone) VALUES ('dharmik@microsoft.com','1','0123456789');
+INSERT INTO phonetbl ( email_id, org_id, phone) VALUES ('dharmik@microsoft.com','1','1234567890');
 INSERT INTO request_type ( name, email_id, org_id ) VALUES ('code review','bill@microsoft.com','1');
-INSERT INTO level ( name, description ) VALUES ('Level 0','requester-level');
-INSERT INTO layer ( name, description ) VALUES ('Layer 0','First Worker');
+INSERT INTO level ( name, description ) VALUES ('Level 1','First level worker');
+INSERT INTO level ( name, description ) VALUES ('Level 2','Second level worker');
+INSERT INTO level ( name, description ) VALUES ('Level 3','Third level worker');
+INSERT INTO layer ( name, description ) VALUES ('Layer 1','First Worker');
+INSERT INTO layer ( name, description ) VALUES ('Layer 2','First alternate Worker');
+INSERT INTO layer ( name, description ) VALUES ('Layer 3','Second alternate Worker');
 INSERT INTO status ( name, description ) VALUES ('Pending','Request is in pending state.');
 INSERT INTO workflow_master ( description, request_type_id, email_id, org_id, dept_id ) VALUES ('Code review request for Bill','1','bill@microsoft.com','1','1');
+INSERT INTO workflowtbl ( workflow_id, level_id, email_id, org_id, layer_id, description ) VALUES ('1','1','bill@microsoft.com','1','1','level 1 for code review workflow');
+INSERT INTO workflowtbl ( workflow_id, level_id, email_id, org_id, layer_id, description ) VALUES ('1','1','parth@microsoft.com','1','2','layer 2 for code review workflow');
+INSERT INTO workflowtbl ( workflow_id, level_id, email_id, org_id, layer_id, description ) VALUES ('1','2','chinu@microsoft.com','1','1','level 2 for code review workflow');
+INSERT INTO workflowtbl ( workflow_id, level_id, email_id, org_id, layer_id, description ) VALUES ('1','1','dharmik@microsoft.com','1','3','layer 3 for code review workflow');

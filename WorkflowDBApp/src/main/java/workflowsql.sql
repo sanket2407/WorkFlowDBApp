@@ -86,13 +86,12 @@ constraint fk8 FOREIGN KEY (email_id,org_id) references `workflow`.`user`(email_
 constraint fk9 FOREIGN KEY (layer_id) references `workflow`.`layer`(layer_id));
 
 CREATE TABLE `workflow`.`workflowinstance` (
-  `workflow_instance_id` INT NOT NULL AUTO_INCREMENT,
+  `workflow_instance_id` INT NOT NULL,
   `workflow_id` INT NOT NULL,
   `level_id` INT NOT NULL,
   `status_id` INT NOT NULL,
   `layer_id` INT NOT NULL,
   `description` VARCHAR (600) NOT NULL,
-PRIMARY KEY(`workflow_instance_id`),
 constraint fk10 FOREIGN KEY (level_id) references `workflow`.`level`(level_id),
 constraint fk11 FOREIGN KEY (status_id) references `workflow`.`status`(status_id),
 constraint fk12 FOREIGN KEY (layer_id) references `workflow`.`layer`(layer_id),
@@ -130,9 +129,15 @@ INSERT INTO layer ( name, description ) VALUES ('Layer 0','First Worker');
 INSERT INTO layer ( name, description ) VALUES ('Layer 1','First alternate Worker');
 INSERT INTO layer ( name, description ) VALUES ('Layer 2','Second alternate Worker');
 INSERT INTO status ( name, description ) VALUES ('Requested','Request is in requested state.');
+INSERT INTO status ( name, description ) VALUES ('Pending','Request is in pending state.');
+INSERT INTO status ( name, description ) VALUES ('Assigned','Request is in assigned state.');
+INSERT INTO status ( name, description ) VALUES ('Approve','Request is in approved state.');
+INSERT INTO status ( name, description ) VALUES ('Reject','Request is in rejected state.');
 INSERT INTO workflow_master ( description, request_type_id, email_id, org_id, dept_id ) VALUES ('Code review request for Bill','1','bill@microsoft.com','1','1');
 INSERT INTO workflowtbl ( workflow_id, level_id, email_id, org_id, layer_id, description ) VALUES ('1','1','bill@microsoft.com','1','1','Code review request for Bill');
 INSERT INTO workflowtbl ( workflow_id, level_id, email_id, org_id, layer_id, description ) VALUES ('1','2','chinu@microsoft.com','1','1','level 1 for code review workflow');
 INSERT INTO workflowtbl ( workflow_id, level_id, email_id, org_id, layer_id, description ) VALUES ('1','2','parth@microsoft.com','1','2','layer 1 for code review workflow for level 1');
 INSERT INTO workflowtbl ( workflow_id, level_id, email_id, org_id, layer_id, description ) VALUES ('1','3','dharmik@microsoft.com','1','1','level 2 for code review workflow');
-INSERT INTO workflowinstance ( workflow_id, level_id, layer_id, status_id, description ) VALUES ('1','1','1','1','Request initiated !');
+INSERT INTO workflowinstance ( workflow_instance_id, workflow_id, level_id, layer_id, status_id, description ) VALUES ('1','1','1','1','1','Request initiated !');
+INSERT INTO workflowinstance ( workflow_instance_id, workflow_id, level_id, layer_id, status_id, description ) VALUES ('1','1','2','1','2','Pending!  level 1 for code review workflow');
+INSERT INTO workflowinstance ( workflow_instance_id, workflow_id, level_id, layer_id, status_id, description ) VALUES ('1','1','2','2','2','Pending!  layer 1 for code review workflow for level 1');

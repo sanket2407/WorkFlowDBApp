@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import databaseConnection.DBConnection;
 
@@ -367,5 +369,143 @@ public class Helper {
 		return status_id;
 	}
 	
+	public int getNewWorkflowInstanceId(){
+		int workflow_instance_id = -1;
+		dbCon = new DBConnection();
+		conn = dbCon.getConnection();
+		Statement stmt = null;
+		
+		try {
 
+			stmt = conn.createStatement();
+			String sql;
+			sql = "SELECT max(workflow_instance_id) as workflow_instance_id FROM workflowinstance";
+			ResultSet rs = stmt.executeQuery(sql);
+			System.out.println(sql);
+			while (rs.next()) {
+				// Retrieve by column name
+				if(rs.getInt("workflow_instance_id") == 0){
+					workflow_instance_id = 1;
+				}
+				else{
+					workflow_instance_id = rs.getInt("workflow_instance_id")+1;
+				}
+				System.out.println(">>> getStatusIDFromStatusName returned: "+ workflow_instance_id);
+				return workflow_instance_id;
+			}
+		
+			rs.close();
+			stmt.close();
+			conn.close();
+		} catch (Exception e) {
+			// Handle errors for Class.forName
+			e.printStackTrace();
+		} finally {
+			// finally block used to close resources
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException se1) {
+				se1.printStackTrace();
+			} // nothing we can do
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException se2) {
+				se2.printStackTrace();
+			} // end finally try
+		} // end try
+		
+		return workflow_instance_id;
+	}
+	
+	public int getMaxLevel_id(int workflow_instance_id){
+		int getMaxLevel_id = -1;
+		dbCon = new DBConnection();
+		conn = dbCon.getConnection();
+		Statement stmt = null;
+		
+		try {
+
+			stmt = conn.createStatement();
+			String sql;
+			sql = "SELECT max(level_id) as max_level_id FROM workflowinstance where workflow_instance_id = '"+ workflow_instance_id +"'";
+			ResultSet rs = stmt.executeQuery(sql);
+			System.out.println(sql);
+			while (rs.next()) {
+				// Retrieve by column name
+				return rs.getInt("max_level_id");
+			}
+		
+			rs.close();
+			stmt.close();
+			conn.close();
+		} catch (Exception e) {
+			// Handle errors for Class.forName
+			e.printStackTrace();
+		} finally {
+			// finally block used to close resources
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException se1) {
+				se1.printStackTrace();
+			} // nothing we can do
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException se2) {
+				se2.printStackTrace();
+			} // end finally try
+		} // end try
+		
+		return getMaxLevel_id;
+	}
+	
+	public int getWorkflowIDFromWorkflowInstanceID(int workflow_instance_ID){
+		int workflow_ID = -1;
+		dbCon = new DBConnection();
+		conn = dbCon.getConnection();
+		Statement stmt = null;
+		
+		try {
+
+			stmt = conn.createStatement();
+			String sql;
+			sql = "SELECT workflow_id FROM workflowinstance where workflow_instance_id='" + workflow_instance_ID + "' group by workflow_id";
+			ResultSet rs = stmt.executeQuery(sql);
+			System.out.println(sql);
+			while (rs.next()) {
+				// Retrieve by column name
+				System.out.println(">>> getWorkflowIDFromWorkflowInstanceID returned: "+ rs.getInt("workflow_id"));
+				return rs.getInt("workflow_id");
+			}
+		
+			rs.close();
+			stmt.close();
+			conn.close();
+		} catch (Exception e) {
+			// Handle errors for Class.forName
+			e.printStackTrace();
+		} finally {
+			// finally block used to close resources
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException se1) {
+				se1.printStackTrace();
+			} // nothing we can do
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException se2) {
+				se2.printStackTrace();
+			} // end finally try
+		} // end try
+		
+		return workflow_ID;
+	}
+	
+	
+	
 }

@@ -13,7 +13,14 @@ public class Request {
 	private int layer_id;
 	private String status_name = "";
 	private int status_id;
+	private int workflow_instance_id;
 	
+	public int getWorkflow_instance_id() {
+		return workflow_instance_id;
+	}
+	public void setWorkflow_instance_id(int workflow_instance_id) {
+		this.workflow_instance_id = workflow_instance_id;
+	}	
 	public String getStatus_name() {
 		return status_name;
 	}

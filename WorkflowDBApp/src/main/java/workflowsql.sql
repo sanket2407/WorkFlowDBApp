@@ -129,8 +129,9 @@ INSERT INTO layer ( name, description ) VALUES ('Layer 0','First Worker');
 INSERT INTO layer ( name, description ) VALUES ('Layer 1','First alternate Worker');
 INSERT INTO layer ( name, description ) VALUES ('Layer 2','Second alternate Worker');
 INSERT INTO status ( name, description ) VALUES ('Requested','Request is in requested state.');
-INSERT INTO status ( name, description ) VALUES ('Pending','Request is in pending state.');
 INSERT INTO status ( name, description ) VALUES ('Assigned','Request is in assigned state.');
+INSERT INTO status ( name, description ) VALUES ('Unassigned','Request is in unassigned state.');
+INSERT INTO status ( name, description ) VALUES ('Pending','Request is in pending state.');
 INSERT INTO status ( name, description ) VALUES ('Approve','Request is in approved state.');
 INSERT INTO status ( name, description ) VALUES ('Reject','Request is in rejected state.');
 INSERT INTO workflow_master ( description, request_type_id, email_id, org_id, dept_id ) VALUES ('Code review request for Bill','1','bill@microsoft.com','1','1');
@@ -139,5 +140,5 @@ INSERT INTO workflowtbl ( workflow_id, level_id, email_id, org_id, layer_id, des
 INSERT INTO workflowtbl ( workflow_id, level_id, email_id, org_id, layer_id, description ) VALUES ('1','2','parth@microsoft.com','1','2','layer 1 for code review workflow for level 1');
 INSERT INTO workflowtbl ( workflow_id, level_id, email_id, org_id, layer_id, description ) VALUES ('1','3','dharmik@microsoft.com','1','1','level 2 for code review workflow');
 INSERT INTO workflowinstance ( workflow_instance_id, workflow_id, level_id, layer_id, status_id, description ) VALUES ('1','1','1','1','1','Request initiated !');
-INSERT INTO workflowinstance ( workflow_instance_id, workflow_id, level_id, layer_id, status_id, description ) VALUES ('1','1','2','1','2','Pending!  level 1 for code review workflow');
-INSERT INTO workflowinstance ( workflow_instance_id, workflow_id, level_id, layer_id, status_id, description ) VALUES ('1','1','2','2','2','Pending!  layer 1 for code review workflow for level 1');
+INSERT INTO workflowinstance ( workflow_instance_id, workflow_id, level_id, layer_id, status_id, description ) VALUES ('1','1','2','1','2','Assigned!  level 1 for code review workflow');
+INSERT INTO workflowinstance ( workflow_instance_id, workflow_id, level_id, layer_id, status_id, description ) VALUES ('1','1','2','2','2','Assigned!  layer 1 for code review workflow for level 1');

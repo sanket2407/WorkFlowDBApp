@@ -1,0 +1,69 @@
+<html>
+<head>
+    <title>AdminDashboard</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <style>
+        /* Set height of the grid so .sidenav can be 100% (adjust if needed) */
+        .row.content {height: 1500px}
+
+        /* Set gray background color and 100% height */
+        .sidenav {
+            background-color: #f1f1f1;
+            height: 100%;
+        }
+
+        /* Set black background color, white text and some padding */
+        footer {
+            background-color: #555;
+            color: white;
+            padding: 15px;
+        }
+
+        /* On small screens, set height to 'auto' for sidenav and grid */
+        @media screen and (max-width: 767px) {
+            .sidenav {
+                height: auto;
+                padding: 15px;
+            }
+            .row.content {height: auto;}
+        }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid">
+            <div class="row content">
+                <div class="col-sm-3 sidenav">
+                    <h4>Organization Admin</h4>
+                    <ul class="nav nav-pills nav-stacked">
+                        <li class="active"><a href="#section1">Home</a></li>
+                        <li><a href="file:///A:/SEM%203/226/Project2/WorkFlowDBApp/WorkflowDBApp/src/main/views/Create_Dept.html">Create Department</a></li>
+                    </ul><br>
+                </div>
+
+                <div class="col-sm-9">
+                        <div class="container">
+                            <h2> DashBoard</h2>
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th>Department ID</th>
+                                    <th>Department Name</th>
+                                    <th>Department Admin</th>
+                                </tr>
+                                </thead>
+                            </table>
+                        </div>
+
+                    </div>
+                <div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

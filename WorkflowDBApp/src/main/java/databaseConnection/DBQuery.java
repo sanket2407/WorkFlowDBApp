@@ -9,7 +9,7 @@ public class DBQuery {
 	
 	Statement stmt=null;
 	ResultSet resultSet=null;
-
+	
 	public ResultSet doSelect(String sql){
 		
 		DBConnection dbcon = new DBConnection();
@@ -19,7 +19,6 @@ public class DBQuery {
 			try {
 				stmt = con.createStatement();
 				resultSet = stmt.executeQuery(sql);
-				
 				stmt.close(); //close statement
 			    con.close();  // close connection	
 			} catch (SQLException e) {
@@ -42,9 +41,7 @@ public class DBQuery {
 			         se.printStackTrace();
 			      }//end finally try
 			   }//end try
-			   System.out.println("Done!");
-			 			
-			
+			   System.out.println("Done!");		
 		    return resultSet;
 	}
 	
@@ -53,12 +50,9 @@ public class DBQuery {
 		
 		DBConnection dbcon = new DBConnection();
 		Connection con = dbcon.getConnection();
-	
 		try {
 			stmt = con.createStatement();
 			stmt.executeUpdate(sql);
-			
-			
 			stmt.close(); // Close statement
 		    con.close();  //Close Connection
 		} catch (SQLException e) {
@@ -83,6 +77,4 @@ public class DBQuery {
 		   }//end try
 		   System.out.println("Done!");
 	}
-	
-	
 }

@@ -1,0 +1,111 @@
+<html>
+<head>
+	<meta charset="utf-8"/>
+
+ 	<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+	<script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+ 	<link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	<!-- Script for Angular JS -->
+	<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0rc1/angular-route.min.js"></script>
+	<script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+	<!-- Loading the AngularJS file from /public/angularJS folder -->
+	<script src="angularjs/home.js"></script>
+	<script src="stylesheets/style.css"></script>
+</head>
+
+<body ng-app="home" ng-controller="homecontroller">
+	<div class="container-fluid">
+		<div class="row">
+			<div id="box">
+
+				<div class="col-md-1" style="margin-top: 20px;">
+					<p class="text-right">
+						<button type="button" id="adminsignin" class="btn btn-info" data-toggle="modal" data-target="#adminLoginModal">Admin Login</button>
+					</p>
+				</div>
+				<div class="col-md-4"></div>
+				<div class="col-md-1" style="margin-top: 20px;">
+					<p class="text-left">
+						<button type="button" id="usersignin" class="btn btn-info" data-toggle="modal" data-target="#userLoginModal">User Login</button>
+					</p>
+
+				</div>
+</div>
+		</div>
+	</div>
+
+	<!-- Admin Login Modal -->
+	<div id="adminLoginModal" class="modal fade" role="dialog">
+		<div class="modal-dialog modal-md">
+		<!-- Admin Login Modal Content -->
+			<div class="modal-content">
+        		<div class="modal-header">
+          			<button type="button" class="close" data-dismiss="modal">&times;</button>
+          			<h3 class="moda-title">Admin Login</h3>
+        		</div>
+        		<div class="modal-body">
+         			<form role="form" name="adminloginform">
+            			<div class="form-group">
+            				<label for="email">Email</label>
+              				<input type="email" class="form-control" id="email" placeholder="Enter email" 
+              				ng-model="email" required>
+            			</div>
+            			<div class="form-group">
+             				<label for="password">Password</label>
+              				<input type="password" class="form-control" id="password" placeholder="Enter password" 
+              				ng-model="password" required>
+            			</div>
+            			<button type="submit" class="btn btn-info btn-block" ng-click="submit('admin');">Log in</button>
+						<br/>
+						<p class="text-left">
+							<button type="button" id="signup" class="btn btn-info btn-block" ng-click="signUp('admin');">Sign Up</button>
+						</p>
+          			</form>
+
+        		</div>
+      		</div>
+    	</div>
+	</div>
+
+
+	<!-- User Login Modal -->
+	<div id="userLoginModal" class="modal fade" role="dialog">
+		<div class="modal-dialog modal-md">
+			<!-- User Login Modal Content -->
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h3 class="moda-title">User Login</h3>
+				</div>
+				<div class="modal-body">
+					<form role="form" name="userloginform">
+						<div class="form-group">
+							<label for="email">Email</label>
+							<input type="email" class="form-control" id="email" placeholder="Enter email"
+								   ng-model="email" required>
+						</div>
+						<div class="form-group">
+							<label for="password">Password</label>
+							<input type="password" class="form-control" id="password" placeholder="Enter password"
+								   ng-model="password" required>
+						</div>
+						<button type="submit" class="btn btn-info btn-block" ng-click="submit('user');">Log in</button>
+
+						<br/>
+						<p class="text-left">
+							<button type="button" id="signup" class="btn btn-info btn-block" ng-click="signUp('user');">Sign Up</button>
+						</p>
+
+
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<html>
+<head>
+    <meta charset="utf-8"/>
+
+    <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+    <!-- Script for Angular JS -->
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0rc1/angular-route.min.js"></script>
+
+    <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+
+    <!-- Loading the AngularJS file from /public/angularJS folder -->
+    <script src="angularjs/signUp.js"></script>
+
+    <title>Login</title>
+</head>
+<body ng-app = "loginapp" ng-controller = "logincontroller">
+<div class="container-fluid">
+    <p><br/></p>
+    <div class="row">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="page-header">
+                        <h3>Registration</h3>
+                    </div>
+                    <form role="form" name="adminsignupform">
+                        <div class="form-group">
+
+                            <div class="form-group">
+                                <label for="Email1">Email</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
+                                    <input type="email" class="form-control" id="UserName" ng-model="email" placeholder="Enter email">
+                                </div>
+                            </div>
+
+                            <label for="Name">Organization Name</label>
+                            <div class="input-group">
+                                <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
+                                <input type="text"  class="form-control" id="FirstName" ng-model="org_name"  placeholder="First Name">
+                            </div>
+                            <label for="address">Address</label>
+                            <div class="input-group">
+                                <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
+                                <input type="text"  class="form-control" id="LastName"  ng-model="address" placeholder="Last Name">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="Password">Password</label>
+                            <div class="input-group">
+                                <span class="input-group-addon"><span class="glyphicon glyphicon-star"></span></span>
+                                <input type="password"  class="form-control" id="Password"  ng-model="password" placeholder="Password">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="Password">Role Name</label>
+                            <div class="input-group">
+                                <span class="input-group-addon"><span class="glyphicon glyphicon-star"></span></span>
+                                <input type="password"  class="form-control" id="Password"  ng-model="rolename" placeholder="Password">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="Password">phone no</label>
+                            <div class="input-group">
+                                <span class="input-group-addon"><span class="glyphicon glyphicon-star"></span></span>
+                                <input type="password"  class="form-control" id="Password"  ng-model="phoneno" placeholder="Password">
+                            </div>
+                        </div>
+                        <hr/>
+                        <!--  <button type="button" class="btn btn-success" ng-click="back();"><span class="glyphicon glyphicon-circle-arrow-left"></span> Back</button>-->
+                        <button type="button" class="btn btn-primary" ng-click="register();"><span class="glyphicon glyphicon-circle-arrow-right"></span> Register</button>
+                        <p><br/></p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="col-md-4"></div>
+
+
+
+</body>
+</html>

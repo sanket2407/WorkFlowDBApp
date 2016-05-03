@@ -1,0 +1,22 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+#box{
+  width: 300px;
+  height: 100px;
+  margin : 150px auto;
+  padding : 20px 20px 20px;
+  background : #7c95f0;
+  background : linear-gradient(#b7c3f0,#7c95f0);
+  border-radius : 30px;
+  box-shadow: 0px 2px 15px 5px black;
+}
+html{
+  background:radial-gradient(circle,#838b83 20%,black);
+}

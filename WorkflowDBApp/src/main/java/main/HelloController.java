@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -30,6 +31,7 @@ import model.Test;
 import model.User;
 import model.Workflow;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 public class HelloController {
 
@@ -86,8 +88,12 @@ public class HelloController {
 	}
 
 	/*
-	 * { "name" : "Microsoft", "address" : "Seattle", "admin_email" :
-	 * "micro@micro.com", "password" : "admin" }
+	 * { 
+	 * "name" : "Microsoft", 
+	 * "address" : "Seattle", 
+	 * "admin_email" :"micro@micro.com", 
+	 * "password" : "admin" 
+	 * }
 	 */
 	@RequestMapping(value = "/orgAdminSignUp", method = RequestMethod.POST)
 	@ResponseBody
@@ -102,11 +108,8 @@ public class HelloController {
 			sql = "INSERT INTO organization ( name, address, admin_email, password ) VALUES ('" + organization.getName()
 					+ "','" + organization.getAddress() + "','" + organization.getAdmin_email() + "','"
 					+ organization.getPassword() + "')";
-
 			System.out.println(sql);
-
 			stmt.executeUpdate(sql);
-
 			stmt.close();
 			conn.close();
 		} catch (Exception e) {
@@ -249,10 +252,14 @@ public class HelloController {
 	}
 
 	/*
-	 * { "email_id": "bill@apple.com", "org_name": "Microsoft", "address":
-	 * "101 E San", "dept_name": "Software", "password": "admin", "role_name":
-	 * "depart_admin", "phones": [{ "phone": "0123456789" }, { "phone":
-	 * "1234567890" }] }
+	 * { 
+	 *   "email_id": "bill@apple.com", 
+	 *	 "org_name": "Microsoft", 
+	 *	 "address":"101 E San",
+	 *	 "dept_name": "Software", 
+	 *	 "password": "admin", 
+	 *	 "role_name":"depart_admin", 
+	 *	 "phones": [{ "phone": "0123456789" }, { "phone":"1234567890" }] }
 	 */
 	/*
 	 * { "email_id": "parth@microsoft.com", "org_name": "Microsoft", "address":
@@ -453,7 +460,10 @@ public class HelloController {
 	}
 
 	/*
-	 * { "level_name" : "Level 0", "description" : "requester-level" }
+	 * { 
+	 *   "level_name" : "Level 0",
+	 *   "description" : "requester-level" 
+	 *  }
 	 */
 	@RequestMapping(value = "/createLevel", method = RequestMethod.POST)
 	@ResponseBody

@@ -5,8 +5,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,11 +24,13 @@ import model.Department;
 import model.Helper;
 import model.Layer;
 import model.Level;
+import model.NextWorkers;
 import model.Organization;
 import model.Request;
 import model.RequestType;
 import model.Role;
 import model.Status;
+import model.TakeRequest;
 import model.Test;
 import model.User;
 import model.Workflow;
@@ -35,6 +39,7 @@ import model.Workflow;
 @RestController
 public class HelloController {
 
+	@CrossOrigin(origins = "http://localhost:9000")
 	@RequestMapping("/")
 	public String index() {
 
@@ -831,14 +836,16 @@ public class HelloController {
 			request.setLayer_id(helper.getLayerIDFromLayerName(request.getLayer_name()));
 			request.setStatus_id(helper.getStatusIDFromStatusName(request.getStatus_name()));
 			request.setDescription("Request initiated !");
+			request.setWorkflow_instance_id(helper.getNewWorkflowInstanceId());
 
 			System.out.println("Creating statement...");
 			stmt = conn.createStatement();
 			String sql;
 
-			sql = "INSERT INTO workflowinstance ( workflow_id, level_id, layer_id, status_id, description ) VALUES (" + "'"
-					+ request.getWorkflow_id() + "','" + request.getLevel_id() + "','" + request.getLayer_id() + "','"
-					+ request.getStatus_id() + "','" + request.getDescription() + "')";
+			sql = "INSERT INTO workflowinstance ( workflow_instance_id, workflow_id, level_id, layer_id, status_id, description ) VALUES ("
+					+ "'" + request.getWorkflow_instance_id() + "','" + request.getWorkflow_id() + "','"
+					+ request.getLevel_id() + "','" + request.getLayer_id() + "','" + request.getStatus_id() + "','"
+					+ request.getDescription() + "')";
 
 			System.out.println(sql);
 			stmt.executeUpdate(sql);
@@ -868,6 +875,211 @@ public class HelloController {
 		} // end try
 
 		return new ResponseEntity<Object>(request, HttpStatus.OK);
+	}
+
+	/*
+	 * {"workflow_instance_id": "1"}
+	 */
+	@RequestMapping(value = "/getNextWorkers", method = RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity<Object> getNextWorkers(@RequestBody NextWorkers nextWorkers) {
+
+		Helper helper = new Helper();
+		DBConnection dbCon = new DBConnection();
+		Connection conn = dbCon.getConnection();
+		Statement stmt = null;
+
+		// get current level
+		nextWorkers.setCurrent_level_id(helper.getMaxLevel_id(nextWorkers.getWorkflow_instance_id()));
+		nextWorkers.setWorkflow_id(helper.getWorkflowIDFromWorkflowInstanceID(nextWorkers.getWorkflow_instance_id()));
+
+		// set new level id
+		System.out.println("New level id is : " + nextWorkers.getCurrent_level_id() + 1);
+		nextWorkers.setNew_level_id(nextWorkers.getCurrent_level_id() + 1);
+
+		// get all approvers of next level
+		List<Map<String, Object>> workers = new ArrayList<Map<String, Object>>();
+		Map<String, Object> worker;
+
+		try {
+
+			stmt = conn.createStatement();
+			String sql;
+			sql = "SELECT email_id, org_id, description, layer_id, level_id from workflow.workflowtbl where workflow_id = '"
+					+ nextWorkers.getWorkflow_id() + "' and level_id = '" + nextWorkers.getNew_level_id() + "'";
+			ResultSet rs = stmt.executeQuery(sql);
+			System.out.println(sql);
+
+			while (rs.next()) {
+
+				String email = rs.getString("email_id");
+				int org_id = rs.getInt("org_id");
+				String description = rs.getString("description");
+				int layer_id = rs.getInt("layer_id");
+				int level_id = rs.getInt("level_id");
+
+				worker = new HashMap<String, Object>();
+				worker.put("email", email);
+				worker.put("org_id", org_id);
+				worker.put("description", description);
+				worker.put("layer_id", layer_id);
+				worker.put("level_id", level_id);
+				workers.add(worker);
+
+				stmt = conn.createStatement();
+
+				sql = "INSERT INTO workflowinstance ( workflow_instance_id, workflow_id, level_id, layer_id, status_id, description ) VALUES ("
+						+ "'" + nextWorkers.getWorkflow_instance_id() + "','" + nextWorkers.getWorkflow_id() + "','"
+						+ level_id + "','" + layer_id + "','" + helper.getStatusIDFromStatusName("Assigned") + "','"
+						+ "Assigned!  " + description + "')";
+
+				System.out.println(sql);
+				stmt.executeUpdate(sql);
+
+			}
+
+			nextWorkers.setWorkers(workers);
+
+			rs.close();
+			stmt.close();
+			conn.close();
+		} catch (Exception e) {
+			// Handle errors for Class.forName
+			e.printStackTrace();
+		} finally {
+			// finally block used to close resources
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException se1) {
+				se1.printStackTrace();
+			} // nothing we can do
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException se2) {
+				se2.printStackTrace();
+			} // end finally try
+		} // end try
+
+		return new ResponseEntity<Object>(nextWorkers, HttpStatus.OK);
+	}
+
+	/*
+	 * { "workflow_instance_id": "1", "workflow_id" : "1", "email_id" :
+	 * "chinu@microsoft.com", "org_name":"Microsoft", "level_id" : "2",
+	 * "layer_id" : "1"}
+	 */
+	@RequestMapping(value = "/takeRequest", method = RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity<Object> takeRequest(@RequestBody TakeRequest takeRequest) {
+
+		Helper helper = new Helper();
+		DBConnection dbCon = new DBConnection();
+		Connection conn1 = dbCon.getConnection();
+		Connection conn2 = dbCon.getConnection();
+		
+		// disabling auto commit
+		try {
+			conn1.setAutoCommit(false);
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+		Statement stmt1 = null;
+		Statement stmt2 = null;
+		try {
+
+			// read status on the request
+
+			System.out.println("Creating statement...");
+			stmt1 = conn1.createStatement();
+			String sql;
+
+			takeRequest.setDescription("Pending! Working on request..!");
+			takeRequest.setStatus("Pending");
+			takeRequest.setStatus_id(helper.getStatusIDFromStatusName(takeRequest.getStatus()));
+
+			sql = " UPDATE workflowinstance SET status_id='" + takeRequest.getStatus_id() + "' , description = '"
+					+ takeRequest.getDescription() + "' WHERE workflow_instance_id = '"
+					+ takeRequest.getWorkflow_instance_id() + "' and  workflow_id = '" + takeRequest.getWorkflow_id()
+					+ "' and level_id = '" + takeRequest.getLevel_id() + "' and layer_id = '"
+					+ takeRequest.getLayer_id() + "' ";
+
+			System.out.println(sql);
+			stmt1.executeUpdate(sql);
+			System.out.println("Statement 1 executed");
+
+			takeRequest.setPrev_status("Assigned");
+			takeRequest.setPrev_status_id(helper.getStatusIDFromStatusName(takeRequest.getPrev_status()));
+
+			Object obj = new Object();
+			synchronized (obj) {
+
+				// Verify the status of the request is still assigned to it or
+				// not! If not then rollback else commit.
+
+				stmt2 = conn2.createStatement();
+				sql = "SELECT status_id FROM workflowinstance where workflow_instance_id = '"
+						+ takeRequest.getWorkflow_instance_id() + "' and workflow_id = '" + takeRequest.getWorkflow_id()
+						+ "' and level_id = '" + takeRequest.getLevel_id() + "' and layer_id = '"
+						+ takeRequest.getLayer_id() + "' ";
+
+				System.out.println(sql);
+				ResultSet rs = stmt2.executeQuery(sql);
+				System.out.println("Statement 2 executed");
+		
+				while (rs.next()) {
+					// Retrieve by column name
+					int current_status_id = rs.getInt("status_id");
+					
+					System.out.println("previous status id was: "+ takeRequest.getPrev_status_id());
+					System.out.println("current_status_id is: "+ current_status_id );
+					
+					if(current_status_id == takeRequest.getPrev_status_id()){
+						System.out.println("Going to commit transactions.....!!");
+						conn1.commit();
+						System.out.println("Transaction commit finished.....!!");
+					}
+					else{
+						System.out.println("Going to rollback transactions.....!!");
+						conn1.rollback();
+						System.out.println("Transaction rollback finished.....!!");
+					}
+				}
+
+			}
+
+			stmt1.close();
+			stmt2.close();
+			conn1.close();
+			conn2.close();
+		} catch (Exception e) {
+			// Handle errors for Class.forName
+			e.printStackTrace();
+			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		} finally {
+			// finally block used to close resources
+			try {
+				if (stmt1 != null)
+					stmt1.close();
+				if (stmt2 != null)
+					stmt2.close();
+			} catch (SQLException se1) {
+				se1.printStackTrace();
+				return new ResponseEntity<Object>(se1.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+			} // nothing we can do
+			try {
+				if (conn1 != null)
+					conn1.close();
+				if (conn2 != null)
+					conn2.close();
+			} catch (SQLException se2) {
+				se2.printStackTrace();
+				return new ResponseEntity<Object>(se2.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+			} // end finally try
+		} // end try
+
+		return new ResponseEntity<Object>(takeRequest, HttpStatus.OK);
 	}
 
 	// ==========================================================

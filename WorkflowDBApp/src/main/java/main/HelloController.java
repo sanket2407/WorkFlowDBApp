@@ -21,6 +21,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import databaseConnection.DBConnection;
+import model.AllDepartments;
+import model.AllOrganizations;
+import model.AllUsers;
 import model.Department;
 import model.Helper;
 import model.Layer;
@@ -1088,11 +1091,194 @@ public class HelloController {
 
 		return new ResponseEntity<Object>(takeRequest, HttpStatus.OK);
 	}
-	
-	
-	
-	
-	
+
+	/*
+	 * {"org_name": "Microsoft"}
+	 */
+	@RequestMapping(value = "/getAllDepartments", method = RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity<Object> getAllDepartments(@RequestBody AllDepartments allDepartments) {
+
+		Helper helper = new Helper();
+		DBConnection dbCon = new DBConnection();
+		Connection conn = dbCon.getConnection();
+		Statement stmt = null;
+
+		allDepartments.setOrg_id(helper.getOrgIDFromOrgName(allDepartments.getOrg_name()));
+		
+		List<HashMap<String,Object>> res_department_list = new ArrayList<HashMap<String,Object>>();
+		
+		try {
+
+			stmt = conn.createStatement();
+			String sql;
+			sql = "SELECT workflow.department.dept_id , workflow.department.name, workflow.user.email_id as admin FROM workflow.department join workflow.user on workflow.department.dept_id= workflow.user.dept_id  where workflow.department.org_id = '"+allDepartments.getOrg_id()+"' and workflow.user.role_id = 1";
+			ResultSet rs = stmt.executeQuery(sql);
+			System.out.println(sql);
+
+			while (rs.next()) {
+
+				HashMap<String, Object> department_data = new HashMap<String, Object>();
+				
+				int department_id = rs.getInt("dept_id"); 
+				String department_name = rs.getString("name");
+				String admin = rs.getString("admin");
+				
+				department_data.put("department_id", department_id);
+				department_data.put("department_name", department_name);
+				department_data.put("admin", admin);
+				
+				res_department_list.add(department_data);
+				
+			}
+
+			System.out.println("All departments : " + res_department_list);
+
+			allDepartments.setDepartment_list(res_department_list);
+
+			rs.close();
+			stmt.close();
+			conn.close();
+		} catch (Exception e) {
+			// Handle errors for Class.forName
+			e.printStackTrace();
+		} finally {
+			// finally block used to close resources
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException se1) {
+				se1.printStackTrace();
+			} // nothing we can do
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException se2) {
+				se2.printStackTrace();
+			} // end finally try
+		} // end try
+
+		return new ResponseEntity<Object>(allDepartments, HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/getAllOrganizations", method = RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity<Object> getAllOrganizations(@RequestBody AllOrganizations allOrganizations) {
+
+		Helper helper = new Helper();
+		DBConnection dbCon = new DBConnection();
+		Connection conn = dbCon.getConnection();
+		Statement stmt = null;
+
+		// get all approvers of next level
+		List<String> organization_list = new ArrayList<String>();
+
+		try {
+
+			stmt = conn.createStatement();
+			String sql;
+			sql = "SELECT name from organization";
+			ResultSet rs = stmt.executeQuery(sql);
+			System.out.println(sql);
+
+			while (rs.next()) {
+
+				String organization = rs.getString("name");
+				organization_list.add(organization);
+
+			}
+
+			System.out.println("All organizations : " + organization_list);
+
+			allOrganizations.setOrganization_list(organization_list);
+
+			rs.close();
+			stmt.close();
+			conn.close();
+		} catch (Exception e) {
+			// Handle errors for Class.forName
+			e.printStackTrace();
+		} finally {
+			// finally block used to close resources
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException se1) {
+				se1.printStackTrace();
+			} // nothing we can do
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException se2) {
+				se2.printStackTrace();
+			} // end finally try
+		} // end try
+
+		return new ResponseEntity<Object>(allOrganizations, HttpStatus.OK);
+	}
+
+	/*
+	 * {"org_name": "Microsoft", "dept_name": "Software"}
+	 */
+	@RequestMapping(value = "/getAllUsers", method = RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity<Object> getAllUsers(@RequestBody AllUsers allUsers) {
+
+		Helper helper = new Helper();
+		DBConnection dbCon = new DBConnection();
+		Connection conn = dbCon.getConnection();
+		Statement stmt = null;
+
+		allUsers.setOrg_id(helper.getOrgIDFromOrgName(allUsers.getOrg_name()));
+		allUsers.setDept_id(helper.getDeptIDFromDeptName(allUsers.getDept_name()));
+
+		// get all approvers of next level
+		List<String> user_list = new ArrayList<String>();
+
+		try {
+
+			stmt = conn.createStatement();
+			String sql;
+			sql = "SELECT email_id from user where org_id = '" + allUsers.getOrg_id() + "' and dept_id = '"
+					+ allUsers.getDept_id() + "'";
+			ResultSet rs = stmt.executeQuery(sql);
+			System.out.println(sql);
+
+			while (rs.next()) {
+
+				String user = rs.getString("email_id");
+				user_list.add(user);
+
+			}
+
+			System.out.println("All users : " + user_list);
+
+			allUsers.setUsers(user_list);
+
+			rs.close();
+			stmt.close();
+			conn.close();
+		} catch (Exception e) {
+			// Handle errors for Class.forName
+			e.printStackTrace();
+		} finally {
+			// finally block used to close resources
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException se1) {
+				se1.printStackTrace();
+			} // nothing we can do
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException se2) {
+				se2.printStackTrace();
+			} // end finally try
+		} // end try
+
+		return new ResponseEntity<Object>(allUsers, HttpStatus.OK);
+	}
 
 	// ==========================================================
 

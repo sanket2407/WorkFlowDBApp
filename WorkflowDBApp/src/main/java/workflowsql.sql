@@ -106,6 +106,7 @@ CREATE TABLE `workflow`.`phonetbl` (
 USE workflow;  
 INSERT INTO organization ( name, address, admin_email, password ) VALUES ('Microsoft','Seattle','micro@micro.com','21232f297a57a5a743894a0e4a801fc3');  
 INSERT INTO department ( name, org_id ) VALUES ('Software','1');
+INSERT INTO department ( name, org_id ) VALUES ('Hardware','1');
 INSERT INTO role ( name) VALUES ('depart_admin');
 INSERT INTO role ( name) VALUES ('user');
 INSERT INTO user ( email_id, org_id, password, address, dept_id, role_id ) VALUES ('bill@microsoft.com','1','21232f297a57a5a743894a0e4a801fc3','101 E San','1','1');

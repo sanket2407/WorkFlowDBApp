@@ -1,5 +1,10 @@
 package model;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
+
 public class TakeRequest {
 	
 		private int workflow_instance_id;
@@ -13,6 +18,18 @@ public class TakeRequest {
 		private int status_id;
 		private String prev_status;
 		private int prev_status_id;
+		private String timestamp = "";
+
+		public String getTimestamp() {
+			return timestamp;
+		}
+
+		public void setTimestamp() {
+			TimeZone tz = TimeZone.getTimeZone("UTC");
+			DateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
+			df.setTimeZone(tz);
+			this.timestamp =  df.format(new Date());
+		}
 		
 		public String getPrev_status() {
 			return prev_status;

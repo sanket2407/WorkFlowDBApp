@@ -92,6 +92,7 @@ CREATE TABLE `workflow`.`workflowinstance` (
   `status_id` INT NOT NULL,
   `layer_id` INT NOT NULL,
   `description` VARCHAR (600) NOT NULL,
+  `timestamp` VARCHAR(45),
 constraint fk10 FOREIGN KEY (level_id) references `workflow`.`level`(level_id),
 constraint fk11 FOREIGN KEY (status_id) references `workflow`.`status`(status_id),
 constraint fk12 FOREIGN KEY (layer_id) references `workflow`.`layer`(layer_id),
@@ -140,6 +141,6 @@ INSERT INTO workflowtbl ( workflow_id, level_id, email_id, org_id, layer_id, des
 INSERT INTO workflowtbl ( workflow_id, level_id, email_id, org_id, layer_id, description ) VALUES ('1','2','chinu@microsoft.com','1','1','level 1 for code review workflow');
 INSERT INTO workflowtbl ( workflow_id, level_id, email_id, org_id, layer_id, description ) VALUES ('1','2','parth@microsoft.com','1','2','layer 1 for code review workflow for level 1');
 INSERT INTO workflowtbl ( workflow_id, level_id, email_id, org_id, layer_id, description ) VALUES ('1','3','dharmik@microsoft.com','1','1','level 2 for code review workflow');
-INSERT INTO workflowinstance ( workflow_instance_id, workflow_id, level_id, layer_id, status_id, description ) VALUES ('1','1','1','1','1','Request initiated !');
-INSERT INTO workflowinstance ( workflow_instance_id, workflow_id, level_id, layer_id, status_id, description ) VALUES ('1','1','2','1','2','Assigned!  level 1 for code review workflow');
-INSERT INTO workflowinstance ( workflow_instance_id, workflow_id, level_id, layer_id, status_id, description ) VALUES ('1','1','2','2','2','Assigned!  layer 1 for code review workflow for level 1');
+INSERT INTO workflowinstance ( workflow_instance_id, workflow_id, level_id, layer_id, status_id, description, timestamp ) VALUES ('1','1','1','1','1','Request initiated !','20160504081040');
+INSERT INTO workflowinstance ( workflow_instance_id, workflow_id, level_id, layer_id, status_id, description, timestamp ) VALUES ('1','1','2','1','2','Assigned!  level 1 for code review workflow','20160504081205');
+INSERT INTO workflowinstance ( workflow_instance_id, workflow_id, level_id, layer_id, status_id, description, timestamp ) VALUES ('1','1','2','2','2','Assigned!  layer 1 for code review workflow for level 1','20160504081205');

@@ -1,7 +1,11 @@
 package model;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 public class NextWorkers {
 	
@@ -10,6 +14,18 @@ public class NextWorkers {
 	private int current_level_id;
 	private int workflow_id;
 	private int new_level_id;
+	private String timestamp = "";
+
+	public String getTimestamp() {
+		return timestamp;
+	}
+
+	public void setTimestamp() {
+		TimeZone tz = TimeZone.getTimeZone("UTC");
+		DateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
+		df.setTimeZone(tz);
+		this.timestamp =  df.format(new Date());
+	}
 	
 	public int getNew_level_id() {
 		return new_level_id;

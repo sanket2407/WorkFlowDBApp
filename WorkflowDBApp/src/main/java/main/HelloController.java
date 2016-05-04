@@ -849,15 +849,16 @@ public class HelloController {
 			request.setStatus_id(helper.getStatusIDFromStatusName(request.getStatus_name()));
 			request.setDescription("Request initiated !");
 			request.setWorkflow_instance_id(helper.getNewWorkflowInstanceId());
-
+			request.setTimestamp();
+			
 			System.out.println("Creating statement...");
 			stmt = conn.createStatement();
 			String sql;
 
-			sql = "INSERT INTO workflowinstance ( workflow_instance_id, workflow_id, level_id, layer_id, status_id, description ) VALUES ("
+			sql = "INSERT INTO workflowinstance ( workflow_instance_id, workflow_id, level_id, layer_id, status_id, description, timestamp ) VALUES ("
 					+ "'" + request.getWorkflow_instance_id() + "','" + request.getWorkflow_id() + "','"
 					+ request.getLevel_id() + "','" + request.getLayer_id() + "','" + request.getStatus_id() + "','"
-					+ request.getDescription() + "')";
+					+ request.getDescription() + "','" + request.getTimestamp() + "')";
 
 			System.out.println(sql);
 			stmt.executeUpdate(sql);
@@ -937,13 +938,14 @@ public class HelloController {
 				worker.put("layer_id", layer_id);
 				worker.put("level_id", level_id);
 				workers.add(worker);
+				nextWorkers.setTimestamp();
 
 				stmt = conn.createStatement();
 
-				sql = "INSERT INTO workflowinstance ( workflow_instance_id, workflow_id, level_id, layer_id, status_id, description ) VALUES ("
+				sql = "INSERT INTO workflowinstance ( workflow_instance_id, workflow_id, level_id, layer_id, status_id, description, timestamp ) VALUES ("
 						+ "'" + nextWorkers.getWorkflow_instance_id() + "','" + nextWorkers.getWorkflow_id() + "','"
 						+ level_id + "','" + layer_id + "','" + helper.getStatusIDFromStatusName("Assigned") + "','"
-						+ "Assigned!  " + description + "')";
+						+ "Assigned!  " + description + "','" + nextWorkers.getTimestamp() + "')";
 
 				System.out.println(sql);
 				stmt.executeUpdate(sql);
@@ -1010,8 +1012,9 @@ public class HelloController {
 			takeRequest.setDescription("Pending! Working on request..!");
 			takeRequest.setStatus("Pending");
 			takeRequest.setStatus_id(helper.getStatusIDFromStatusName(takeRequest.getStatus()));
+			takeRequest.setTimestamp();
 
-			sql = " UPDATE workflowinstance SET status_id='" + takeRequest.getStatus_id() + "' , description = '"
+			sql = " UPDATE workflowinstance SET timestamp = '"+takeRequest.getTimestamp()+"' , status_id='" + takeRequest.getStatus_id() + "' , description = '"
 					+ takeRequest.getDescription() + "' WHERE workflow_instance_id = '"
 					+ takeRequest.getWorkflow_instance_id() + "' and  workflow_id = '" + takeRequest.getWorkflow_id()
 					+ "' and level_id = '" + takeRequest.getLevel_id() + "' and layer_id = '"

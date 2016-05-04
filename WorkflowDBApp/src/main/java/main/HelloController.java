@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import databaseConnection.DBConnection;
 import model.AllDepartments;
 import model.AllOrganizations;
+import model.AllUnassignedDepartments;
 import model.AllUsers;
 import model.Department;
 import model.Helper;
@@ -1278,8 +1279,71 @@ public class HelloController {
 		} // end try
 
 		return new ResponseEntity<Object>(allUsers, HttpStatus.OK);
-	}
+	}	
+	
+	/*
+	 * {"org_name": "Microsoft"}
+	 */
+	@RequestMapping(value = "/getAllUnassignedDepartments", method = RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity<Object> getAllDepartments(@RequestBody AllUnassignedDepartments allUnassignedDepartments) {
 
+		Helper helper = new Helper();
+		DBConnection dbCon = new DBConnection();
+		Connection conn = dbCon.getConnection();
+		Statement stmt = null;
+
+		allUnassignedDepartments.setOrg_id(helper.getOrgIDFromOrgName(allUnassignedDepartments.getOrg_name()));
+		
+		List<String> department_list = new ArrayList<String>();
+		
+		try {
+
+			stmt = conn.createStatement();
+			String sql;
+			sql = "SELECT workflow.department.name as dept_name FROM workflow.department left join workflow.user on workflow.department.dept_id= workflow.user.dept_id where workflow.department.org_id = '"+ allUnassignedDepartments.getOrg_id() +"' and workflow.user.email_id is null";
+			ResultSet rs = stmt.executeQuery(sql);
+			System.out.println(sql);
+
+			while (rs.next()) {
+				
+				String department_name = rs.getString("dept_name");
+				
+				department_list.add(department_name);
+				
+			}
+
+			System.out.println("All departments : " + department_list);
+
+			allUnassignedDepartments.setDepartment_list(department_list);
+
+			rs.close();
+			stmt.close();
+			conn.close();
+		} catch (Exception e) {
+			// Handle errors for Class.forName
+			e.printStackTrace();
+		} finally {
+			// finally block used to close resources
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException se1) {
+				se1.printStackTrace();
+			} // nothing we can do
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException se2) {
+				se2.printStackTrace();
+			} // end finally try
+		} // end try
+
+		return new ResponseEntity<Object>(allUnassignedDepartments, HttpStatus.OK);
+	}
+	
+	
+	
 	// ==========================================================
 
 	@RequestMapping(value = "/test", method = RequestMethod.POST)

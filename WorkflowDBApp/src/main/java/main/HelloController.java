@@ -1,5 +1,6 @@
 package main;
 
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -93,19 +94,18 @@ public class HelloController {
 	}
 
 	/*
-	 * { 
-	 * "name" : "Microsoft", 
-	 * "address" : "Seattle", 
-	 * "admin_email" :"micro@micro.com", 
-	 * "password" : "admin" 
-	 * }
+	 * { "name" : "Microsoft", "address" : "Seattle", "admin_email"
+	 * :"micro@micro.com", "password" : "admin" }
 	 */
 	@RequestMapping(value = "/orgAdminSignUp", method = RequestMethod.POST)
 	@ResponseBody
-	public ResponseEntity<Object> clientSignUp(@RequestBody Organization organization) {
+	public ResponseEntity<Object> clientSignUp(@RequestBody Organization organization) throws NoSuchAlgorithmException {
 
+		Helper helper = new Helper();
 		Connection conn = new DBConnection().getConnection();
 		Statement stmt = null;
+
+		organization.setPassword(helper.getHexData(organization.getPassword()));
 
 		try {
 			stmt = conn.createStatement();
@@ -147,8 +147,10 @@ public class HelloController {
 	 */
 	@RequestMapping(value = "/orgAdminLogin", method = RequestMethod.POST)
 	@ResponseBody
-	public ResponseEntity<Object> clientLogin(@RequestBody Organization organization) {
+	public ResponseEntity<Object> clientLogin(@RequestBody Organization organization) throws NoSuchAlgorithmException {
 
+		Helper helper = new Helper();
+		organization.setPassword(helper.getHexData(organization.getPassword()));
 		DBConnection dbCon = new DBConnection();
 		Connection conn = dbCon.getConnection();
 		Statement stmt = null;
@@ -257,14 +259,10 @@ public class HelloController {
 	}
 
 	/*
-	 * { 
-	 *   "email_id": "bill@apple.com", 
-	 *	 "org_name": "Microsoft", 
-	 *	 "address":"101 E San",
-	 *	 "dept_name": "Software", 
-	 *	 "password": "admin", 
-	 *	 "role_name":"depart_admin", 
-	 *	 "phones": [{ "phone": "0123456789" }, { "phone":"1234567890" }] }
+	 * { "email_id": "bill@apple.com", "org_name": "Microsoft",
+	 * "address":"101 E San", "dept_name": "Software", "password": "admin",
+	 * "role_name":"depart_admin", "phones": [{ "phone": "0123456789" }, {
+	 * "phone":"1234567890" }] }
 	 */
 	/*
 	 * { "email_id": "parth@microsoft.com", "org_name": "Microsoft", "address":
@@ -290,6 +288,7 @@ public class HelloController {
 			user.setOrg_id(helper.getOrgIDFromOrgName(user.getOrg_name()));
 			user.setDept_id(helper.getDeptIDFromDeptName(user.getDept_name()));
 			user.setRole_id(helper.getRoleFromRoleName(user.getRole_name()));
+			user.setPassword(helper.getHexData(user.getPassword()));
 
 			if (user.getOrg_id() == -1) {
 				return new ResponseEntity<Object>("Organization not exists", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -349,9 +348,10 @@ public class HelloController {
 	 */
 	@RequestMapping(value = "/userLogin", method = RequestMethod.POST)
 	@ResponseBody
-	public ResponseEntity<Object> userLogin(@RequestBody User user) {
+	public ResponseEntity<Object> userLogin(@RequestBody User user) throws NoSuchAlgorithmException {
 
 		Helper helper = new Helper();
+		user.setPassword(helper.getHexData(user.getPassword()));
 		DBConnection dbCon = new DBConnection();
 		Connection conn = dbCon.getConnection();
 		Statement stmt = null;
@@ -372,6 +372,17 @@ public class HelloController {
 				String pass = rs.getString("password");
 
 				if (pass.equals(user.getPassword())) {
+
+					sql = "SELECT role_id FROM user where email_id='" + user.getEmail_id() + "' and org_id="
+							+ user.getOrg_id();
+					ResultSet rs1 = stmt.executeQuery(sql);
+					System.out.println(sql);
+					while (rs1.next()) {
+						int role_id = rs1.getInt("role_id");
+						user.setRole_id(role_id);
+						user.setRole_name(new Helper().getRoleNameFromRoleId(user.getRole_id()));
+					}
+
 					return new ResponseEntity<Object>(user, HttpStatus.OK);
 				} else {
 					return new ResponseEntity<Object>("Invalid username or password!", HttpStatus.BAD_REQUEST);
@@ -465,10 +476,7 @@ public class HelloController {
 	}
 
 	/*
-	 * { 
-	 *   "level_name" : "Level 0",
-	 *   "description" : "requester-level" 
-	 *  }
+	 * { "level_name" : "Level 0", "description" : "requester-level" }
 	 */
 	@RequestMapping(value = "/createLevel", method = RequestMethod.POST)
 	@ResponseBody
@@ -978,7 +986,7 @@ public class HelloController {
 		DBConnection dbCon = new DBConnection();
 		Connection conn1 = dbCon.getConnection();
 		Connection conn2 = dbCon.getConnection();
-		
+
 		// disabling auto commit
 		try {
 			conn1.setAutoCommit(false);
@@ -1027,20 +1035,19 @@ public class HelloController {
 				System.out.println(sql);
 				ResultSet rs = stmt2.executeQuery(sql);
 				System.out.println("Statement 2 executed");
-		
+
 				while (rs.next()) {
 					// Retrieve by column name
 					int current_status_id = rs.getInt("status_id");
-					
-					System.out.println("previous status id was: "+ takeRequest.getPrev_status_id());
-					System.out.println("current_status_id is: "+ current_status_id );
-					
-					if(current_status_id == takeRequest.getPrev_status_id()){
+
+					System.out.println("previous status id was: " + takeRequest.getPrev_status_id());
+					System.out.println("current_status_id is: " + current_status_id);
+
+					if (current_status_id == takeRequest.getPrev_status_id()) {
 						System.out.println("Going to commit transactions.....!!");
 						conn1.commit();
 						System.out.println("Transaction commit finished.....!!");
-					}
-					else{
+					} else {
 						System.out.println("Going to rollback transactions.....!!");
 						conn1.rollback();
 						System.out.println("Transaction rollback finished.....!!");
@@ -1081,6 +1088,11 @@ public class HelloController {
 
 		return new ResponseEntity<Object>(takeRequest, HttpStatus.OK);
 	}
+	
+	
+	
+	
+	
 
 	// ==========================================================
 

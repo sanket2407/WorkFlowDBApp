@@ -6,7 +6,7 @@ CREATE TABLE `workflow`.`organization` (
   `name` VARCHAR(45) NOT NULL,
   `address` varchar(600) NOT NULL,
   `admin_email` varchar(45) NOT NULL UNIQUE,
-  `password` varchar(45) NOT NULL,
+  `password` varchar(100) NOT NULL,
   PRIMARY KEY (`org_id`));
 
 CREATE TABLE `workflow`.`role`(
@@ -25,7 +25,7 @@ constraint fk1 FOREIGN KEY(org_id) references `workflow`.`organization`(org_id))
 CREATE TABLE `workflow`.`user` (
   `email_id` VARCHAR(45) NOT NULL UNIQUE,
   `org_id` INT NOT NULL AUTO_INCREMENT,
-  `password` VARCHAR(45) NOT NULL,
+  `password` VARCHAR(100) NOT NULL,
   `address` VARCHAR(600) NOT NULL,
   `dept_id` INT,
   `role_id` INT,
@@ -104,20 +104,20 @@ CREATE TABLE `workflow`.`phonetbl` (
   constraint fk14 FOREIGN KEY (email_id,org_id) references `workflow`.`user`(email_id,org_id));
   
 USE workflow;  
-INSERT INTO organization ( name, address, admin_email, password ) VALUES ('Microsoft','Seattle','micro@micro.com','admin');  
+INSERT INTO organization ( name, address, admin_email, password ) VALUES ('Microsoft','Seattle','micro@micro.com','21232f297a57a5a743894a0e4a801fc3');  
 INSERT INTO department ( name, org_id ) VALUES ('Software','1');
 INSERT INTO role ( name) VALUES ('depart_admin');
 INSERT INTO role ( name) VALUES ('user');
-INSERT INTO user ( email_id, org_id, password, address, dept_id, role_id ) VALUES ('bill@microsoft.com','1','admin','101 E San','1','1');
+INSERT INTO user ( email_id, org_id, password, address, dept_id, role_id ) VALUES ('bill@microsoft.com','1','21232f297a57a5a743894a0e4a801fc3','101 E San','1','1');
 INSERT INTO phonetbl ( email_id, org_id, phone) VALUES ('bill@microsoft.com','1','0123456789');
 INSERT INTO phonetbl ( email_id, org_id, phone) VALUES ('bill@microsoft.com','1','1234567890');
-INSERT INTO user ( email_id, org_id, password, address, dept_id, role_id ) VALUES ('parth@microsoft.com','1','admin','111 E San','1','2');
+INSERT INTO user ( email_id, org_id, password, address, dept_id, role_id ) VALUES ('parth@microsoft.com','1','21232f297a57a5a743894a0e4a801fc3','111 E San','1','2');
 INSERT INTO phonetbl ( email_id, org_id, phone) VALUES ('parth@microsoft.com','1','0123456789');
 INSERT INTO phonetbl ( email_id, org_id, phone) VALUES ('parth@microsoft.com','1','1234567890');
-INSERT INTO user ( email_id, org_id, password, address, dept_id, role_id ) VALUES ('chinu@microsoft.com','1','admin','111 E San','1','2');
+INSERT INTO user ( email_id, org_id, password, address, dept_id, role_id ) VALUES ('chinu@microsoft.com','1','21232f297a57a5a743894a0e4a801fc3','111 E San','1','2');
 INSERT INTO phonetbl ( email_id, org_id, phone) VALUES ('chinu@microsoft.com','1','0123456789');
 INSERT INTO phonetbl ( email_id, org_id, phone) VALUES ('chinu@microsoft.com','1','1234567890');
-INSERT INTO user ( email_id, org_id, password, address, dept_id, role_id ) VALUES ('dharmik@microsoft.com','1','admin','111 E San','1','2');
+INSERT INTO user ( email_id, org_id, password, address, dept_id, role_id ) VALUES ('dharmik@microsoft.com','1','21232f297a57a5a743894a0e4a801fc3','111 E San','1','2');
 INSERT INTO phonetbl ( email_id, org_id, phone) VALUES ('dharmik@microsoft.com','1','0123456789');
 INSERT INTO phonetbl ( email_id, org_id, phone) VALUES ('dharmik@microsoft.com','1','1234567890');
 INSERT INTO request_type ( name, email_id, org_id ) VALUES ('code review','bill@microsoft.com','1');

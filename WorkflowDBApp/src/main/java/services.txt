@@ -26,7 +26,7 @@ getAllUnassignedDepartments
 updateEmail
 deleteEmail
 getAllRequestsOfUser - workflowid, name, description
-
+getStatsUserDashBoard
 	
 	
 

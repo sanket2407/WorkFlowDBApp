@@ -227,4 +227,12 @@ INSERT INTO workflowinstance ( workflow_instance_id, workflow_id, level_id, laye
 
 UPDATE workflowinstance SET status_id='4' , description = 'Pending! Working on request..!' WHERE workflow_instance_id = '1' and  workflow_id = '1' and level_id = '2' and layer_id = '1';
 
-call time_duration('2016-05-05 08:30:33');
+CREATE  OR REPLACE VIEW `user_dashboard` AS
+select rt1.dept_id, rt1.org_id, rt1.email_id, rt2.workflow_instance_id, rt1.workflow_id, rt1.name, rt1.description as description1, rt2.description as description2, rt2.status_id, rt2.level_id, rt2.layer_id, rt2.timestamp from 
+(SELECT t1.workflow_id, t1.email_id, t1.org_id, t1.dept_id, t1.description, t2.name FROM workflow.workflow_master as t1 join workflow.request_type as t2 on t1.request_type_id=t2.request_type_id 
+where t1.email_id = "bill@microsoft.com" and t1.org_id = 1 and dept_id = 1) as rt1 
+join
+workflow.workflowinstance as rt2 
+on
+rt1.workflow_id = rt2.workflow_id;
+;

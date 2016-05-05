@@ -38,8 +38,9 @@
         }
     </style>
 </head>
-<body  ng-app="admin" ng-controller="admincontroller"  background="https://s-media-cache-ak0.pinimg.com/736x/d8/af/16/d8af16fc52ff045592306f1c74f11011.jpg">
+<!--background="https://s-media-cache-ak0.pinimg.com/736x/d8/af/16/d8af16fc52ff045592306f1c74f11011.jpg"-->
 
+<body  ng-app="admin" ng-controller="admincontroller" style="background-color: #b7c3f0">
 <nav class="navbar navbar-inverse">
     <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
@@ -62,10 +63,10 @@
 
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <span class="glyphicon glyphicon-user" aria-hidden="true"></span> <span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#">About Us</a></li>
-                        <li><a href="#">Sign Out</a></li>
-
+                    <ul class="dropdown-menu" style="background-color: #2e2e2e">
+                        <li><button type="button" id="createDept" class="btn btn-info btn-block"  style="background-color: #2e2e2e" data-toggle="modal" data-target="#updateEmailModal">Update Email</button></li>
+                        <li><button type="button" id="createDept" class="btn btn-info btn-block" style="background-color: #2e2e2e" data-toggle="modal" data-target="#deleteEmailModal">Delete Account</button></li>
+                        <li><button type="button" id="createDept" class="btn btn-info btn-block" style="background-color: #2e2e2e" data-toggle="modal" data-target="#signOutModal">Sign out</button></li>
                     </ul>
                 </li>
             </ul>
@@ -196,6 +197,70 @@
 </div>
 
 
+<!--Update Email Modal -->
+
+<div id="updateEmailModal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-md">
+        <!-- Create Department Modal Content -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h3 class="moda-title">Update Email</h3>
+            </div>
+            <div class="modal-body">
+                <form role="form" name="createDepartmentForm">
+                    <div class="form-group">
+                        <label for="email"> Current Email id</label>
+                        <input type="email" class="form-control" id="name" placeholder="Enter new email"
+                               ng-model="current_email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email"> New Email</label>
+                        <input type="email" class="form-control" id="name" placeholder="Enter new email"
+                               ng-model="new_email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email"> Organization Name</label>
+                        <input type="text" class="form-control" id="name" placeholder="Enter organization name"
+                               ng-model="org_name" required>
+                    </div>
+
+
+                    <button type="button" class="btn btn-info btn-block" ng-click="update();">Update</button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Delete Email Modal -->
+
+<div id="deleteEmailModal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-md">
+        <!-- Create Department Modal Content -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h3 class="moda-title">Delete Email</h3>
+            </div>
+            <div class="modal-body">
+                <form role="form" name="createDepartmentForm">
+                    <div class="form-group">
+                        <h3><label for="email">Are you sure you want to delete your account?</label></h3>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-2"><button type="button" class="btn btn-info btn-block" ng-click="delete('<%=org_name%>','<%=email%>');">Yes</button></div>
+                        <div class="col-sm-2"><button type="button" class="btn btn-info btn-block" ng-click="init('<%=org_name%>','<%=email%>');">No</button></div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
 
 
 

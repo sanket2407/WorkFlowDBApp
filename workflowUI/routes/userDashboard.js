@@ -1,6 +1,10 @@
 exports.loginPage = function (req, res) {
-    //req.session.email = req.param('email');
-    //console.log("session email :: " + req.session.email);
-    res.render("userDashboard"/*,{"email" : req.session.email}*/);
+    console.log("in loginpage server which will render orgAdminDshBoard");
+    console.log("email :: " + req.param("email_id"));
+    console.log("Organization :: " + req.param("org_name"));
+    email = req.param('email_id');
+    org_name = req.param('org_name');
+    console.log("email :: " + email);
+    res.render("userDashboard",{"email" : email, "org_name": org_name});
 }
 

@@ -458,6 +458,50 @@ public class Helper {
 
 		return status_id;
 	}
+	
+	public String getStatusNameFromStatusID(int status_id) {
+		String status_name = "";
+		dbCon = new DBConnection();
+		conn = dbCon.getConnection();
+		Statement stmt = null;
+
+		try {
+
+			stmt = conn.createStatement();
+			String sql;
+			sql = "SELECT name FROM status where status_id='" + status_id + "'";
+			ResultSet rs = stmt.executeQuery(sql);
+			System.out.println(sql);
+			while (rs.next()) {
+				// Retrieve by column name
+				System.out.println(">>> getStatusNameFromStatusID returned: " + rs.getString("name"));
+				return rs.getString("name");
+			}
+
+			rs.close();
+			stmt.close();
+			conn.close();
+		} catch (Exception e) {
+			// Handle errors for Class.forName
+			e.printStackTrace();
+		} finally {
+			// finally block used to close resources
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException se1) {
+				se1.printStackTrace();
+			} // nothing we can do
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException se2) {
+				se2.printStackTrace();
+			} // end finally try
+		} // end try
+
+		return status_name;
+	}
 
 	public int getNewWorkflowInstanceId() {
 		int workflow_instance_id = -1;

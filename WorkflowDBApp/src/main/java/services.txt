@@ -23,7 +23,9 @@ getAllDepartments
 getAllOrganizations	
 getAllUsers	
 getAllUnassignedDepartments	
-
+updateEmail
+deleteEmail
+getAllRequestsOfUser - workflowid, name, description
 
 	
 	

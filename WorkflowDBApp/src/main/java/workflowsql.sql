@@ -99,14 +99,77 @@ constraint fk12 FOREIGN KEY (layer_id) references `workflow`.`layer`(layer_id),
 constraint fk13 FOREIGN KEY (workflow_id) references `workflow`.`workflow_master`(workflow_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+CREATE TABLE `workflow`.`workflowinstancelog` (
+  `workflow_instance_id` INT NOT NULL,
+  `workflow_id` INT NOT NULL,
+  `level_id` INT NOT NULL,
+  `status_id` INT NOT NULL,
+  `layer_id` INT NOT NULL,
+  `description` VARCHAR (600) NOT NULL,
+  `timestamp` VARCHAR(45),
+constraint fk18 FOREIGN KEY (level_id) references `workflow`.`level`(level_id),
+constraint fk19 FOREIGN KEY (status_id) references `workflow`.`status`(status_id),
+constraint fk20 FOREIGN KEY (layer_id) references `workflow`.`layer`(layer_id),
+constraint fk21 FOREIGN KEY (workflow_id) references `workflow`.`workflow_master`(workflow_id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+  
 CREATE TABLE `workflow`.`phonetbl` (
   `email_id` varchar(45) NOT NULL,
   `org_id` INT NOT NULL,
   `phone` varchar(10) NOT NULL,
   constraint fk14 FOREIGN KEY (email_id,org_id) references `workflow`.`user`(email_id,org_id) ON DELETE CASCADE ON UPDATE CASCADE
-  );
+  );  
   
-USE workflow;  
+USE workflow;
+
+DELIMITER $$
+CREATE TRIGGER before_workflowinstance_update 
+    BEFORE UPDATE ON workflowinstance
+    FOR EACH ROW 
+BEGIN
+    INSERT INTO workflowinstancelog
+    SET
+    workflow_instance_id = OLD.workflow_instance_id, 
+    workflow_id = OLD.workflow_id,
+    level_id = OLD.level_id, 
+    layer_id = OLD.layer_id, 
+    status_id = OLD.status_id, 
+    description = OLD.description, 
+    timestamp = OLD.timestamp;
+    
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER before_workflowinstance_update_timestamp 
+    BEFORE UPDATE ON workflowinstance
+    FOR EACH ROW 
+BEGIN
+  SET NEW.timestamp = NOW();
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER `before_workflowinstance_insert` BEFORE INSERT ON `workflowinstance`
+FOR EACH ROW BEGIN
+  SET NEW.timestamp = NOW();
+END$$
+DELIMITER ;
+
+DROP procedure IF EXISTS `time_duration`;
+DELIMITER $$
+USE `workflow`$$
+CREATE PROCEDURE `time_duration` (IN input_timestamp VARCHAR(100))
+BEGIN
+
+IF input_timestamp != now() THEN ((SELECT TIMESTAMPDIFF(MINUTE, input_timestamp, NOW()) as duration_in_minute));
+END IF;
+
+END
+$$
+
+DELIMITER ;
+
 INSERT INTO organization ( name, address, admin_email, password ) VALUES ('Microsoft','Seattle','micro@micro.com','21232f297a57a5a743894a0e4a801fc3');  
 INSERT INTO department ( name, org_id ) VALUES ('Software','1');
 INSERT INTO department ( name, org_id ) VALUES ('Hardware','1');
@@ -158,7 +221,10 @@ INSERT INTO workflowtbl ( workflow_id, level_id, email_id, org_id, layer_id, des
 INSERT INTO workflowtbl ( workflow_id, level_id, email_id, org_id, layer_id, description ) VALUES ('1','2','chinu@microsoft.com','1','1','level 1 for code review workflow');
 INSERT INTO workflowtbl ( workflow_id, level_id, email_id, org_id, layer_id, description ) VALUES ('1','2','parth@microsoft.com','1','2','layer 1 for code review workflow for level 1');
 INSERT INTO workflowtbl ( workflow_id, level_id, email_id, org_id, layer_id, description ) VALUES ('1','3','dharmik@microsoft.com','1','1','level 2 for code review workflow');
-INSERT INTO workflowinstance ( workflow_instance_id, workflow_id, level_id, layer_id, status_id, description, timestamp ) VALUES ('1','1','1','1','1','Request initiated !','20160504081040');
-INSERT INTO workflowinstance ( workflow_instance_id, workflow_id, level_id, layer_id, status_id, description, timestamp ) VALUES ('1','1','2','1','2','Assigned!  level 1 for code review workflow','20160504081205');
-INSERT INTO workflowinstance ( workflow_instance_id, workflow_id, level_id, layer_id, status_id, description, timestamp ) VALUES ('1','1','2','2','2','Assigned!  layer 1 for code review workflow for level 1','20160504081205');
+INSERT INTO workflowinstance ( workflow_instance_id, workflow_id, level_id, layer_id, status_id, description ) VALUES ('1','1','1','1','1','Request initiated !');
+INSERT INTO workflowinstance ( workflow_instance_id, workflow_id, level_id, layer_id, status_id, description ) VALUES ('1','1','2','1','2','Assigned!  level 1 for code review workflow');
+INSERT INTO workflowinstance ( workflow_instance_id, workflow_id, level_id, layer_id, status_id, description ) VALUES ('1','1','2','2','2','Assigned!  layer 1 for code review workflow for level 1');
 
+UPDATE workflowinstance SET status_id='4' , description = 'Pending! Working on request..!' WHERE workflow_instance_id = '1' and  workflow_id = '1' and level_id = '2' and layer_id = '1';
+
+call time_duration('2016-05-05 08:30:33');

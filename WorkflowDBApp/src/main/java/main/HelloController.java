@@ -28,6 +28,8 @@ import model.AllUsers;
 import model.ApproveRequest;
 import model.DeleteEmail;
 import model.Department;
+import model.GetAllRequestsOfUser;
+import model.GetStatsUserDashBoard;
 import model.Helper;
 import model.Layer;
 import model.Level;
@@ -311,10 +313,10 @@ public class HelloController {
 		Connection conn = dbCon.getConnection();
 		Statement stmt = null;
 		try {
-			
+
 			organization.setOrg_id(helper.getOrgIDFromAdminEmail(organization.getAdmin_email()));
 			organization.setOrg_name(helper.getOrgNameFromOrgID(organization.getOrg_id()));
-			
+
 			System.out.println("Creating statement...");
 			stmt = conn.createStatement();
 			String sql;
@@ -513,7 +515,7 @@ public class HelloController {
 		user.setPassword(helper.getHexData(user.getPassword()));
 		user.setDept_id(helper.getDeptIDFromUserEmail(user.getEmail_id()));
 		user.setDept_name(helper.getDeptNameFromDeptID(user.getDept_id()));
-		
+
 		DBConnection dbCon = new DBConnection();
 		Connection conn = dbCon.getConnection();
 		Statement stmt = null;
@@ -722,12 +724,9 @@ public class HelloController {
 	}
 
 	/*
-	 * { 
-	 * "workflow_id" : "1", 
-	 * "worker_email_id" : "chinu@microsoft.com",
-	 * "worker_org_name":"Microsoft",
-	 *  "description" :"level 1 for code review workflow", 
-	 *  "level_name": "Level 1"}
+	 * { "workflow_id" : "1", "worker_email_id" : "chinu@microsoft.com",
+	 * "worker_org_name":"Microsoft", "description"
+	 * :"level 1 for code review workflow", "level_name": "Level 1"}
 	 */
 	@RequestMapping(value = "/addLevelIntoWorkflow", method = RequestMethod.POST)
 	@ResponseBody
@@ -845,7 +844,7 @@ public class HelloController {
 
 	/*
 	 * { "workflow_id" : "1", "email_id" : "chinu@microsoft.com",
-	 * "org_name":"Microsoft", "status_name": "Requested"}
+	 * "org_name":"Microsoft"}
 	 */
 	@RequestMapping(value = "/doRequest", method = RequestMethod.POST)
 	@ResponseBody
@@ -856,7 +855,7 @@ public class HelloController {
 		Connection conn = dbCon.getConnection();
 		Statement stmt = null;
 		try {
-
+			request.setStatus_name("Requested");
 			request.setLevel_id(helper.getLevelIDFromLevelName(request.getLevel_name()));
 			request.setLayer_id(helper.getLayerIDFromLayerName(request.getLayer_name()));
 			request.setStatus_id(helper.getStatusIDFromStatusName(request.getStatus_name()));
@@ -868,10 +867,10 @@ public class HelloController {
 			stmt = conn.createStatement();
 			String sql;
 
-			sql = "INSERT INTO workflowinstance ( workflow_instance_id, workflow_id, level_id, layer_id, status_id, description, timestamp ) VALUES ("
+			sql = "INSERT INTO workflowinstance ( workflow_instance_id, workflow_id, level_id, layer_id, status_id, description ) VALUES ("
 					+ "'" + request.getWorkflow_instance_id() + "','" + request.getWorkflow_id() + "','"
 					+ request.getLevel_id() + "','" + request.getLayer_id() + "','" + request.getStatus_id() + "','"
-					+ request.getDescription() + "','" + request.getTimestamp() + "')";
+					+ request.getDescription() + "')";
 
 			System.out.println(sql);
 			stmt.executeUpdate(sql);
@@ -955,10 +954,10 @@ public class HelloController {
 
 				stmt = conn.createStatement();
 
-				sql = "INSERT INTO workflowinstance ( workflow_instance_id, workflow_id, level_id, layer_id, status_id, description, timestamp ) VALUES ("
+				sql = "INSERT INTO workflowinstance ( workflow_instance_id, workflow_id, level_id, layer_id, status_id, description ) VALUES ("
 						+ "'" + nextWorkers.getWorkflow_instance_id() + "','" + nextWorkers.getWorkflow_id() + "','"
 						+ level_id + "','" + layer_id + "','" + helper.getStatusIDFromStatusName("Assigned") + "','"
-						+ "Assigned!  " + description + "','" + nextWorkers.getTimestamp() + "')";
+						+ "Assigned!  " + description + "')";
 
 				System.out.println(sql);
 				stmt.executeUpdate(sql);
@@ -1027,11 +1026,11 @@ public class HelloController {
 			takeRequest.setStatus_id(helper.getStatusIDFromStatusName(takeRequest.getStatus()));
 			takeRequest.setTimestamp();
 
-			sql = " UPDATE workflowinstance SET timestamp = '" + takeRequest.getTimestamp() + "' , status_id='"
-					+ takeRequest.getStatus_id() + "' , description = '" + takeRequest.getDescription()
-					+ "' WHERE workflow_instance_id = '" + takeRequest.getWorkflow_instance_id()
-					+ "' and  workflow_id = '" + takeRequest.getWorkflow_id() + "' and level_id = '"
-					+ takeRequest.getLevel_id() + "' and layer_id = '" + takeRequest.getLayer_id() + "' ";
+			sql = " UPDATE workflowinstance SET status_id='" + takeRequest.getStatus_id() + "' , description = '"
+					+ takeRequest.getDescription() + "' WHERE workflow_instance_id = '"
+					+ takeRequest.getWorkflow_instance_id() + "' and  workflow_id = '" + takeRequest.getWorkflow_id()
+					+ "' and level_id = '" + takeRequest.getLevel_id() + "' and layer_id = '"
+					+ takeRequest.getLayer_id() + "' ";
 
 			System.out.println(sql);
 			stmt1.executeUpdate(sql);
@@ -1134,11 +1133,11 @@ public class HelloController {
 			approveRequest.setStatus_id(helper.getStatusIDFromStatusName(approveRequest.getStatus()));
 			approveRequest.setTimestamp();
 
-			sql = " UPDATE workflowinstance SET timestamp = '" + approveRequest.getTimestamp() + "' , status_id='"
-					+ approveRequest.getStatus_id() + "' , description = '" + approveRequest.getDescription()
-					+ "' WHERE workflow_instance_id = '" + approveRequest.getWorkflow_instance_id()
-					+ "' and  workflow_id = '" + approveRequest.getWorkflow_id() + "' and level_id = '"
-					+ approveRequest.getLevel_id() + "' and layer_id = '" + approveRequest.getLayer_id() + "' ";
+			sql = " UPDATE workflowinstance SET status_id='" + approveRequest.getStatus_id() + "' , description = '"
+					+ approveRequest.getDescription() + "' WHERE workflow_instance_id = '"
+					+ approveRequest.getWorkflow_instance_id() + "' and  workflow_id = '"
+					+ approveRequest.getWorkflow_id() + "' and level_id = '" + approveRequest.getLevel_id()
+					+ "' and layer_id = '" + approveRequest.getLayer_id() + "' ";
 
 			System.out.println(sql);
 			stmt.executeUpdate(sql);
@@ -1169,7 +1168,7 @@ public class HelloController {
 
 		return new ResponseEntity<Object>(approveRequest, HttpStatus.OK);
 	}
-	
+
 	/*
 	 * { "workflow_instance_id": "1", "workflow_id" : "1", "email_id" :
 	 * "chinu@microsoft.com", "org_name":"Microsoft", "level_id" : "2",
@@ -1195,11 +1194,11 @@ public class HelloController {
 			rejectRequest.setStatus_id(helper.getStatusIDFromStatusName(rejectRequest.getStatus()));
 			rejectRequest.setTimestamp();
 
-			sql = " UPDATE workflowinstance SET timestamp = '" + rejectRequest.getTimestamp() + "' , status_id='"
-					+ rejectRequest.getStatus_id() + "' , description = '" + rejectRequest.getDescription()
-					+ "' WHERE workflow_instance_id = '" + rejectRequest.getWorkflow_instance_id()
-					+ "' and  workflow_id = '" + rejectRequest.getWorkflow_id() + "' and level_id = '"
-					+ rejectRequest.getLevel_id() + "' and layer_id = '" + rejectRequest.getLayer_id() + "' ";
+			sql = " UPDATE workflowinstance SET status_id='" + rejectRequest.getStatus_id() + "' , description = '"
+					+ rejectRequest.getDescription() + "' WHERE workflow_instance_id = '"
+					+ rejectRequest.getWorkflow_instance_id() + "' and  workflow_id = '"
+					+ rejectRequest.getWorkflow_id() + "' and level_id = '" + rejectRequest.getLevel_id()
+					+ "' and layer_id = '" + rejectRequest.getLayer_id() + "' ";
 
 			System.out.println(sql);
 			stmt.executeUpdate(sql);
@@ -1230,8 +1229,6 @@ public class HelloController {
 
 		return new ResponseEntity<Object>(rejectRequest, HttpStatus.OK);
 	}
-	
-	
 
 	/*
 	 * {"org_name": "Microsoft"}
@@ -1485,7 +1482,8 @@ public class HelloController {
 	}
 
 	/*
-	 * {"current_email_id": "bill@microsoft.com", "new_email_id": "newBill@microsoft.com", "org_name": "Microsoft"}
+	 * {"current_email_id": "bill@microsoft.com", "new_email_id":
+	 * "newBill@microsoft.com", "org_name": "Microsoft"}
 	 */
 	@RequestMapping(value = "/updateEmail", method = RequestMethod.POST)
 	@ResponseBody
@@ -1502,13 +1500,15 @@ public class HelloController {
 
 			stmt = conn.createStatement();
 			String sql;
-			
-			sql = "UPDATE `workflow`.`user` SET `email_id`='" + updateEmail.getNew_email_id() + "' WHERE `email_id`='"+ updateEmail.getCurrent_email_id()+"' and`org_id`='"+ updateEmail.getOrg_id()+"'";
-			
+
+			sql = "UPDATE `workflow`.`user` SET `email_id`='" + updateEmail.getNew_email_id() + "' WHERE `email_id`='"
+					+ updateEmail.getCurrent_email_id() + "' and`org_id`='" + updateEmail.getOrg_id() + "'";
+
 			stmt.executeUpdate(sql);
 			System.out.println(sql);
-			
-			System.out.println(">>> email id updated from : "+ updateEmail.getCurrent_email_id() +" to : "+ updateEmail.getNew_email_id());
+
+			System.out.println(">>> email id updated from : " + updateEmail.getCurrent_email_id() + " to : "
+					+ updateEmail.getNew_email_id());
 
 			stmt.close();
 			conn.close();
@@ -1533,8 +1533,7 @@ public class HelloController {
 
 		return new ResponseEntity<Object>(updateEmail, HttpStatus.OK);
 	}
-	
-	
+
 	/*
 	 * {"email_id": "bill@microsoft.com", "org_name": "Microsoft"}
 	 */
@@ -1553,13 +1552,14 @@ public class HelloController {
 
 			stmt = conn.createStatement();
 			String sql;
-			
-			sql = "DELETE FROM `workflow`.`user` WHERE `email_id`='"+ deleteEmail.getEmail_id()+"' and`org_id`='"+ deleteEmail.getOrg_id() +"'";
-			
+
+			sql = "DELETE FROM `workflow`.`user` WHERE `email_id`='" + deleteEmail.getEmail_id() + "' and`org_id`='"
+					+ deleteEmail.getOrg_id() + "'";
+
 			stmt.executeUpdate(sql);
 			System.out.println(sql);
-			
-			System.out.println(">>> email id : "+ deleteEmail.getEmail_id() +" deleted!");
+
+			System.out.println(">>> email id : " + deleteEmail.getEmail_id() + " deleted!");
 
 			stmt.close();
 			conn.close();
@@ -1584,12 +1584,213 @@ public class HelloController {
 
 		return new ResponseEntity<Object>(deleteEmail, HttpStatus.OK);
 	}
-	
+
+	/*
+	 * {"email_id": "bill@microsoft.com", "org_id": "1", "dept_id": "1"}
+	 */
+	@RequestMapping(value = "/getAllRequestsOfUser", method = RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity<Object> getAllRequestsOfUser(@RequestBody GetAllRequestsOfUser getAllRequestsOfUser) {
+
+		Helper helper = new Helper();
+		DBConnection dbCon = new DBConnection();
+		Connection conn = dbCon.getConnection();
+		Statement stmt = null;
+
+		List<Map<String, Object>> request_list = new ArrayList<Map<String, Object>>();
+
+		try {
+
+			stmt = conn.createStatement();
+			String sql;
+			sql = "SELECT t1.workflow_id, t2.name, t1.description FROM workflow.workflow_master as t1 join workflow.request_type as t2 on t1.request_type_id=t2.request_type_id where t1.email_id = '"
+					+ getAllRequestsOfUser.getEmail_id() + "' and t1.org_id = '" + getAllRequestsOfUser.getOrg_id()
+					+ "' and dept_id = '" + getAllRequestsOfUser.getDept_id() + "'";
+			ResultSet rs = stmt.executeQuery(sql);
+			System.out.println(sql);
+
+			while (rs.next()) {
+
+				Map<String, Object> temp = new HashMap<String, Object>();
+
+				int workflow_id = rs.getInt("workflow_id");
+				String request_name = rs.getString("name");
+				String description = rs.getString("name");
+
+				temp.put("workflow_id", workflow_id);
+				temp.put("request_name", request_name);
+				temp.put("description", description);
+
+				request_list.add(temp);
+
+			}
+
+			System.out.println("All departments : " + request_list);
+
+			getAllRequestsOfUser.setRequest_list(request_list);
+
+			rs.close();
+			stmt.close();
+			conn.close();
+		} catch (Exception e) {
+			// Handle errors for Class.forName
+			e.printStackTrace();
+		} finally {
+			// finally block used to close resources
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException se1) {
+				se1.printStackTrace();
+			} // nothing we can do
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException se2) {
+				se2.printStackTrace();
+			} // end finally try
+		} // end try
+
+		return new ResponseEntity<Object>(getAllRequestsOfUser, HttpStatus.OK);
+	}
+
+	/*
+	 * {"email_id": "bill@microsoft.com", "org_id": "1", "dept_id": "1"}
+	 */
+	@RequestMapping(value = "/getStatsUserDashBoard", method = RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity<Object> getStatsUserDashBoard(@RequestBody GetStatsUserDashBoard getStatsUserDashBoard) {
+
+		Helper helper = new Helper();
+		DBConnection dbCon = new DBConnection();
+		Connection conn = dbCon.getConnection();
+		Statement stmt = null;
+
+		List<Map<String, Object>> user_dashboard_stats = new ArrayList<Map<String, Object>>();
+
+		try {
+
+			stmt = conn.createStatement();
+			String sql;
+			sql = "select rt2.workflow_instance_id, rt1.workflow_id, rt1.name, rt1.description as description1, rt2.description as description2, rt2.status_id, rt2.level_id, rt2.layer_id, rt2.timestamp from (SELECT t1.workflow_id, t1.email_id, t1.org_id, t1.dept_id, t1.description, t2.name FROM workflow.workflow_master as t1 join workflow.request_type as t2 on t1.request_type_id=t2.request_type_id where t1.email_id = '"+getStatsUserDashBoard.getEmail_id()+"' and t1.org_id = '"+getStatsUserDashBoard.getOrg_id()+"' and dept_id = '"+getStatsUserDashBoard.getDept_id()+"') as rt1 join workflow.workflowinstance as rt2 on rt1.workflow_id = rt2.workflow_id where rt1.email_id = '"+getStatsUserDashBoard.getEmail_id()+"' and rt1.org_id = '"+getStatsUserDashBoard.getOrg_id()+"' and rt1.dept_id = '"+getStatsUserDashBoard.getDept_id()+"'";
+			ResultSet rs = stmt.executeQuery(sql);
+			System.out.println(sql);
+
+			while (rs.next()) {
+
+				Map<String, Object> temp = new HashMap<String, Object>();
+				
+				int workflow_instance_id = rs.getInt("workflow_instance_id");
+				int workflow_id = rs.getInt("workflow_id");
+				String request_name = rs.getString("name");
+				String description1 = rs.getString("description1");
+				String description2 = rs.getString("description2");
+				int status_id = rs.getInt("status_id");
+				String status_name = helper.getStatusNameFromStatusID(status_id);
+				int level_id = rs.getInt("level_id");
+				int layer_id = rs.getInt("layer_id");
+				String timestamp = rs.getString("timestamp");
+				String duration = "";
+				
+				Connection conn1 = dbCon.getConnection();
+				Statement stmt1 = conn1.createStatement();
+				String sql1 = "call time_duration('"+timestamp+"')";
+				ResultSet rs1 = stmt1.executeQuery(sql1);
+				System.out.println(sql1);
+
+				while (rs1.next()) {
+					duration = rs1.getString("duration_in_minute");
+				}
+				
+				temp.put("workflow_instance_id", workflow_instance_id);
+				temp.put("workflow_id", workflow_id);
+				temp.put("request_name", request_name);
+				temp.put("description1", description1);
+				temp.put("description2", description2);
+				temp.put("status_id", status_id);
+				temp.put("status_name", status_name);
+				temp.put("level_id", level_id);
+				temp.put("layer_id", layer_id);
+				temp.put("timestamp", timestamp);
+				temp.put("duration", duration);
+
+				user_dashboard_stats.add(temp);
+
+			}
+
+			System.out.println("user dashboard stats : " + user_dashboard_stats);
+
+			getStatsUserDashBoard.setUser_dashboard_stats(user_dashboard_stats);
+			
+			rs.close();
+			stmt.close();
+			conn.close();
+		} catch (Exception e) {
+			// Handle errors for Class.forName
+			e.printStackTrace();
+		} finally {
+			// finally block used to close resources
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException se1) {
+				se1.printStackTrace();
+			} // nothing we can do
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException se2) {
+				se2.printStackTrace();
+			} // end finally try
+		} // end try
+
+		return new ResponseEntity<Object>(getStatsUserDashBoard, HttpStatus.OK);
+	}
+
 	// ==========================================================
 
 	@RequestMapping(value = "/test", method = RequestMethod.POST)
 	@ResponseBody
 	public ResponseEntity<Object> test(@RequestBody Test test) {
+		DBConnection dbCon = new DBConnection();
+		Connection conn = dbCon.getConnection();
+		Statement stmt = null;
+
+		try {
+
+			stmt = conn.createStatement();
+			String sql;
+
+			sql = "call test_procedure";
+
+			ResultSet rs = stmt.executeQuery(sql);
+			System.out.println(sql);
+
+			while (rs.next()) {
+
+				System.out.println(rs.getString("email_id"));
+
+			}
+			stmt.close();
+			conn.close();
+		} catch (Exception e) {
+			// Handle errors for Class.forName
+			e.printStackTrace();
+		} finally {
+			// finally block used to close resources
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException se1) {
+				se1.printStackTrace();
+			} // nothing we can do
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException se2) {
+				se2.printStackTrace();
+			} // end finally try
+		} // end try
 
 		return new ResponseEntity<Object>(test, HttpStatus.OK);
 	}

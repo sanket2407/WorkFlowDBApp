@@ -1,0 +1,196 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Department Admin Dashboard</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0rc1/angular-route.min.js"></script>
+
+    <script src="angularjs/next.js"></script>
+    <style>
+        /* Set height of the grid so .sidenav can be 100% (adjust if needed) */
+        .row.content {height: 1500px}
+
+        /* Set gray background color and 100% height */
+        .sidenav {
+            background-color: #333;
+            height: 100%;
+        }
+
+        /* Set black background color, white text and some padding */
+        footer {
+            background-color: #555;
+            color: white;
+            padding: 15px;
+        }
+
+        /* On small screens, set height to 'auto' for sidenav and grid */
+        @media screen and (max-width: 767px) {
+            .sidenav {
+                height: auto;
+                padding: 15px;
+            }
+            .row.content {height: auto;}
+        }
+    </style>
+</head>
+<body  ng-app="next" ng-controller="nextcontroller"  background="https://s-media-cache-ak0.pinimg.com/736x/d8/af/16/d8af16fc52ff045592306f1c74f11011.jpg">
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Workflow System</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right" >
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <span class="glyphicon glyphicon-user" aria-hidden="true"></span> <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Sign Out</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+</nav>
+
+<div class="container-fluid">
+    <div class="row content">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-4" >
+            <h4 style="color: #ffffff"> Level Management </h4>
+            <ul class="nav nav-pills nav-stacked">
+                <li><button type="button" id="request" class="btn btn-info btn-block"  data-toggle="modal" data-target="#addLevelModal"> Click here</button></li>
+            </ul><br>
+        </div>
+        <div class="col-sm-4"></div>
+
+    </div>
+</div>
+
+<!-- Level addition Modal -->
+<div id="addLevelModal" class="modal fade" role="dialog">
+
+    <div class="modal-dialog modal-md">
+        <!-- Admin Login Modal Content -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h3 class="moda-title"><%= level_name%></h3>
+            </div>
+            <div class="modal-body">
+                <form role="form" name="createRequestform">
+                    <div class="form-group">
+                        <label for="email">Email_id</label>
+                        <input type="email" class="form-control" id="email" placeholder="Enter email"
+                               ng-model="email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Organization Name</label>
+                        <label for="email"><%=org_name%></label>
+<!--                        <input type="text" class="form-control" id="org_name" placeholder="Enter Organization Name"
+                               ng-model="org_name" required>-->
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Description</label>
+                        <input type="text" class="form-control" id="desc" placeholder="Enter Description"
+                               ng-model="desc" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <p class="text-left">
+                                <button type="button" id="createRequest" class="btn btn-info btn-block"  data-toggle="modal" data-target="#addLayerModal">Add Layer</button>
+                            </p>
+                        </div>
+                        <div class="col-sm-4">
+                            <p class="text-left">
+                                <button type="button" id="createRequest" class="btn btn-info btn-block" ng-click="createNext('<%=level_name%>','<%=org_name%>','<%=workflow_id%>' );">Next</button>
+                            </p>
+                        </div>
+                        <div class="col-sm-4">
+                            <p class="text-left">
+                                <button type="button" id="createRequest" class="btn btn-info btn-block" ng-click="finish();">Finish</button>
+                            </p>
+                        </div>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="addLayerModal" class="modal fade" role="dialog">
+
+    <div class="modal-dialog modal-md">
+        <!-- Admin Login Modal Content -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+                <div id="crazy_shit">
+                    <h3 class="moda-title">Add Layer</h3>
+                </div>
+            </div>
+            <div class="modal-body">
+                <form role="form" name="createRequestform">
+                    <div class="form-group">
+                        <label for="email">Email_id</label>
+                        <input type="email" class="form-control" id="email" placeholder="Enter email"
+                               ng-model="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Organization Name</label>
+                        <label for="email"><%= org_name%></label>
+                        <!--                        <input type="text" class="form-control" id="org_name" placeholder="Enter Organization Name"
+                                                       ng-model="org_name" required>-->
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Description</label>
+                        <input type="text" class="form-control" id="desc" placeholder="Enter Description"
+                               ng-model="desc" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <p class="text-left">
+                                <button type="button" id="createRequest" class="btn btn-info btn-block"  ng-click="createLayer('<%=level_name%>','<%=org_name%>','<%=workflow_id%>','<%=layer_name%>');">Add Layer</button>
+                            </p>
+                        </div>
+                        <div class="col-sm-4">
+                            <p class="text-left">
+                                <button type="button" id="createRequest" class="btn btn-info btn-block" ng-click="finish();">Finish</button>
+                            </p>
+                        </div>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
+
+
+

@@ -311,7 +311,10 @@ public class HelloController {
 		Connection conn = dbCon.getConnection();
 		Statement stmt = null;
 		try {
-
+			
+			organization.setOrg_id(helper.getOrgIDFromAdminEmail(organization.getAdmin_email()));
+			organization.setOrg_name(helper.getOrgNameFromOrgID(organization.getOrg_id()));
+			
 			System.out.println("Creating statement...");
 			stmt = conn.createStatement();
 			String sql;

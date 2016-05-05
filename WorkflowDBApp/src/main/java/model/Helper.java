@@ -552,6 +552,96 @@ public class Helper {
 		return workflow_ID;
 	}
 
+	public int getDeptIDFromUserEmail(String user_email) {
+
+		int dept_id = -1;
+		dbCon = new DBConnection();
+		conn = dbCon.getConnection();
+		Statement stmt = null;
+
+		try {
+
+			stmt = conn.createStatement();
+			String sql;
+			sql = "SELECT dept_id FROM user where email_id ='" + user_email + "'";
+			ResultSet rs = stmt.executeQuery(sql);
+			System.out.println(sql);
+			while (rs.next()) {
+				// Retrieve by column name
+				System.out.println(">>> getDeptIDFromUserEmail returned: " + rs.getInt("dept_id"));
+				return rs.getInt("dept_id");
+			}
+
+			rs.close();
+			stmt.close();
+			conn.close();
+		} catch (Exception e) {
+			// Handle errors for Class.forName
+			e.printStackTrace();
+		} finally {
+			// finally block used to close resources
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException se1) {
+				se1.printStackTrace();
+			} // nothing we can do
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException se2) {
+				se2.printStackTrace();
+			} // end finally try
+		} // end try
+
+		return dept_id;
+	}
+	
+	public String getDeptNameFromDeptID(int dept_id) {
+
+		String dept_name = "";
+		dbCon = new DBConnection();
+		conn = dbCon.getConnection();
+		Statement stmt = null;
+
+		try {
+
+			stmt = conn.createStatement();
+			String sql;
+			sql = "SELECT name FROM department where dept_id ='" + dept_id + "'";
+			ResultSet rs = stmt.executeQuery(sql);
+			System.out.println(sql);
+			while (rs.next()) {
+				// Retrieve by column name
+				System.out.println(">>> getDeptNameFromDeptID returned: " + rs.getString("name"));
+				return rs.getString("name");
+			}
+
+			rs.close();
+			stmt.close();
+			conn.close();
+		} catch (Exception e) {
+			// Handle errors for Class.forName
+			e.printStackTrace();
+		} finally {
+			// finally block used to close resources
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException se1) {
+				se1.printStackTrace();
+			} // nothing we can do
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException se2) {
+				se2.printStackTrace();
+			} // end finally try
+		} // end try
+
+		return dept_name;
+	}
+	
 	public String getHexData(String input) throws NoSuchAlgorithmException {
 
 		MessageDigest md = MessageDigest.getInstance("MD5");
@@ -569,5 +659,7 @@ public class Helper {
 
 		return sb.toString();
 	}
+	
+	
 
 }

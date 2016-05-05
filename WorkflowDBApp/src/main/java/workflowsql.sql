@@ -58,7 +58,7 @@ CREATE TABLE `workflow`.`request_type` (
   `email_id` VARCHAR(45) NOT NULL,
   `org_id` INT NOT NULL,
 UNIQUE(email_id, org_id, name),
-constraint fk5 FOREIGN KEY (email_id,org_id) references `workflow`.`user`(email_id,org_id), 
+constraint fk5 FOREIGN KEY (email_id,org_id) references `workflow`.`user`(email_id,org_id) ON DELETE CASCADE ON UPDATE CASCADE, 
 PRIMARY KEY(`request_type_id`));
 
 CREATE TABLE `workflow`.`workflow_master` (
@@ -69,7 +69,7 @@ CREATE TABLE `workflow`.`workflow_master` (
   `org_id` INT NOT NULL,
   `dept_id` INT NOT NULL,
 PRIMARY KEY(`workflow_id`),
-constraint fk15 FOREIGN KEY (email_id,org_id) references `workflow`.`user`(email_id,org_id),
+constraint fk15 FOREIGN KEY (email_id,org_id) references `workflow`.`user`(email_id,org_id) ON DELETE CASCADE ON UPDATE CASCADE,
 constraint fk16 FOREIGN KEY (dept_id) references `workflow`.`department`(dept_id),
 constraint fk6 FOREIGN KEY (request_type_id) references `workflow`.`request_type`(request_type_id));
 
@@ -80,9 +80,9 @@ CREATE TABLE `workflow`.`workflowtbl` (
   `email_id` VARCHAR(45) NOT NULL,
   `org_id` INT NOT NULL,
   `description` VARCHAR (600) NOT NULL,
-constraint fk17 FOREIGN KEY (workflow_id) references `workflow`.`workflow_master`(workflow_id),
+constraint fk17 FOREIGN KEY (workflow_id) references `workflow`.`workflow_master`(workflow_id) ON DELETE CASCADE ON UPDATE CASCADE,
 constraint fk7 FOREIGN KEY (level_id) references `workflow`.`level`(level_id),
-constraint fk8 FOREIGN KEY (email_id,org_id) references `workflow`.`user`(email_id,org_id),
+constraint fk8 FOREIGN KEY (email_id,org_id) references `workflow`.`user`(email_id,org_id) ON DELETE CASCADE ON UPDATE CASCADE,
 constraint fk9 FOREIGN KEY (layer_id) references `workflow`.`layer`(layer_id));
 
 CREATE TABLE `workflow`.`workflowinstance` (
@@ -96,13 +96,15 @@ CREATE TABLE `workflow`.`workflowinstance` (
 constraint fk10 FOREIGN KEY (level_id) references `workflow`.`level`(level_id),
 constraint fk11 FOREIGN KEY (status_id) references `workflow`.`status`(status_id),
 constraint fk12 FOREIGN KEY (layer_id) references `workflow`.`layer`(layer_id),
-constraint fk13 FOREIGN KEY (workflow_id) references `workflow`.`workflow_master`(workflow_id));
+constraint fk13 FOREIGN KEY (workflow_id) references `workflow`.`workflow_master`(workflow_id) ON DELETE CASCADE ON UPDATE CASCADE
+);
 
 CREATE TABLE `workflow`.`phonetbl` (
   `email_id` varchar(45) NOT NULL,
   `org_id` INT NOT NULL,
   `phone` varchar(10) NOT NULL,
-  constraint fk14 FOREIGN KEY (email_id,org_id) references `workflow`.`user`(email_id,org_id));
+  constraint fk14 FOREIGN KEY (email_id,org_id) references `workflow`.`user`(email_id,org_id) ON DELETE CASCADE ON UPDATE CASCADE
+  );
   
 USE workflow;  
 INSERT INTO organization ( name, address, admin_email, password ) VALUES ('Microsoft','Seattle','micro@micro.com','21232f297a57a5a743894a0e4a801fc3');  
@@ -127,9 +129,24 @@ INSERT INTO level ( name, description ) VALUES ('Level 0','Requester');
 INSERT INTO level ( name, description ) VALUES ('Level 1','First level worker');
 INSERT INTO level ( name, description ) VALUES ('Level 2','Second level worker');
 INSERT INTO level ( name, description ) VALUES ('Level 3','Third level worker');
+INSERT INTO level ( name, description ) VALUES ('Level 4','Fourth level worker');
+INSERT INTO level ( name, description ) VALUES ('Level 5','Fifth level worker');
+INSERT INTO level ( name, description ) VALUES ('Level 6','Sixth level worker');
+INSERT INTO level ( name, description ) VALUES ('Level 7','Seventh level worker');
+INSERT INTO level ( name, description ) VALUES ('Level 8','Eighth level worker');
+INSERT INTO level ( name, description ) VALUES ('Level 9','Nineth level worker');
+INSERT INTO level ( name, description ) VALUES ('Level 10','Tenth level worker');
 INSERT INTO layer ( name, description ) VALUES ('Layer 0','First Worker');
 INSERT INTO layer ( name, description ) VALUES ('Layer 1','First alternate Worker');
 INSERT INTO layer ( name, description ) VALUES ('Layer 2','Second alternate Worker');
+INSERT INTO layer ( name, description ) VALUES ('Layer 3','Third alternate Worker');
+INSERT INTO layer ( name, description ) VALUES ('Layer 4','Fourth alternate Worker');
+INSERT INTO layer ( name, description ) VALUES ('Layer 5','Fifth alternate Worker');
+INSERT INTO layer ( name, description ) VALUES ('Layer 6','Sixth alternate Worker');
+INSERT INTO layer ( name, description ) VALUES ('Layer 7','Seventh alternate Worker');
+INSERT INTO layer ( name, description ) VALUES ('Layer 8','Eighth alternate Worker');
+INSERT INTO layer ( name, description ) VALUES ('Layer 9','Nineth alternate Worker');
+INSERT INTO layer ( name, description ) VALUES ('Layer 10','Tenth alternate Worker');
 INSERT INTO status ( name, description ) VALUES ('Requested','Request is in requested state.');
 INSERT INTO status ( name, description ) VALUES ('Assigned','Request is in assigned state.');
 INSERT INTO status ( name, description ) VALUES ('Unassigned','Request is in unassigned state.');

@@ -39,6 +39,7 @@ import model.Role;
 import model.Status;
 import model.TakeRequest;
 import model.Test;
+import model.UpdateEmail;
 import model.User;
 import model.Workflow;
 
@@ -506,6 +507,9 @@ public class HelloController {
 
 		Helper helper = new Helper();
 		user.setPassword(helper.getHexData(user.getPassword()));
+		user.setDept_id(helper.getDeptIDFromUserEmail(user.getEmail_id()));
+		user.setDept_name(helper.getDeptNameFromDeptID(user.getDept_id()));
+		
 		DBConnection dbCon = new DBConnection();
 		Connection conn = dbCon.getConnection();
 		Statement stmt = null;
@@ -714,9 +718,12 @@ public class HelloController {
 	}
 
 	/*
-	 * { "workflow_id" : "1", "worker_email_id" : "chinu@microsoft.com",
-	 * "worker_org_name":"Microsoft", "description" :
-	 * "level 1 for code review workflow", "level_name": "Level 1"}
+	 * { 
+	 * "workflow_id" : "1", 
+	 * "worker_email_id" : "chinu@microsoft.com",
+	 * "worker_org_name":"Microsoft",
+	 *  "description" :"level 1 for code review workflow", 
+	 *  "level_name": "Level 1"}
 	 */
 	@RequestMapping(value = "/addLevelIntoWorkflow", method = RequestMethod.POST)
 	@ResponseBody
@@ -1473,6 +1480,56 @@ public class HelloController {
 		return new ResponseEntity<Object>(allUnassignedDepartments, HttpStatus.OK);
 	}
 
+	/*
+	 * {"current_email_id": "bill@microsoft.com", "new_email_id": "newBill@microsoft.com", "org_name": "Microsoft"}
+	 */
+	@RequestMapping(value = "/updateEmail", method = RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity<Object> updateEmail(@RequestBody UpdateEmail updateEmail) {
+
+		Helper helper = new Helper();
+		DBConnection dbCon = new DBConnection();
+		Connection conn = dbCon.getConnection();
+		Statement stmt = null;
+
+		updateEmail.setOrg_id(helper.getOrgIDFromOrgName(updateEmail.getOrg_name()));
+
+		try {
+
+			stmt = conn.createStatement();
+			String sql;
+			
+			sql = "UPDATE `workflow`.`user` SET `email_id`='" + updateEmail.getNew_email_id() + "' WHERE `email_id`='"+ updateEmail.getCurrent_email_id()+"' and`org_id`='"+ updateEmail.getOrg_id()+"'";
+			
+			stmt.executeUpdate(sql);
+			System.out.println(sql);
+			
+			System.out.println(">>> email id updated from : "+ updateEmail.getCurrent_email_id() +" to : "+ updateEmail.getNew_email_id());
+
+			stmt.close();
+			conn.close();
+		} catch (Exception e) {
+			// Handle errors for Class.forName
+			e.printStackTrace();
+		} finally {
+			// finally block used to close resources
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException se1) {
+				se1.printStackTrace();
+			} // nothing we can do
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException se2) {
+				se2.printStackTrace();
+			} // end finally try
+		} // end try
+
+		return new ResponseEntity<Object>(updateEmail, HttpStatus.OK);
+	}
+	
 	// ==========================================================
 
 	@RequestMapping(value = "/test", method = RequestMethod.POST)

@@ -30,9 +30,10 @@ login.controller('homecontroller', function($scope, $window ,$http) {
                 
                 console.log("inside success");
                 console.log(data);
+                console.log(data.org_name);
                 // Setting up the session variable.
                // req.session.email=data.email;
-                window.location.assign('/orgAdminDashboard?email_id=' + data.email_id);
+                window.location.assign('/orgAdminDashboard?admin_email=' + data.email_id+'&org_name='+data.org_name);
 
             }).error(function (error) {
                 console.log("inside error");
@@ -56,13 +57,12 @@ login.controller('homecontroller', function($scope, $window ,$http) {
                 })
             }).success(function (data) {
 
-                console.log("inside success");
-                console.log("role" + data.role_name);
+                console.log("inside admin success");
 
                 if(usecase=='admin')
-                    window.location.assign('/deptAdminDashboard');
+                    window.location.assign('/deptAdminDashboard?email_id=' + data.email_id+'&org_name='+data.org_name);
                 else
-                    window.location.assign('/userDashboard');
+                    window.location.assign('/userDashboard?email_id=' + data.email_id+'&org_name='+data.org_name);
             }).error(function (error) {
                 console.log("inside error");
                 console.log(error);

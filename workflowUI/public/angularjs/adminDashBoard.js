@@ -2,14 +2,20 @@
 
 var login = angular.module('admin', []);
 var count=1;
-
+var orgname;
+var email;
 //defining the login controller
 
 login.controller('admincontroller', function($scope, $window ,$http) {
 
+    $scope.department = [];
+// Organization Admin  services
+    $scope.init = function(org_name,email_id){
 
-    $scope.init = function(org_name){
-
+        email=email_id;
+        console.log("inside init function");
+        console.log("organization name"+org_name);
+        orgname=org_name;
         $http({
             method: "post",
             header:{
@@ -21,12 +27,18 @@ login.controller('admincontroller', function($scope, $window ,$http) {
                 "org_name":org_name
             })
         }).success(function (data) {
+            console.log("inside init success");
 
-            console.log("inside success");
-            console.log(data);
-            // Setting up the session variable.
-            // req.session.email=data.email;
-            window.location.assign('/orgAdminDashBoard?admin_email=' + data.admin_email+'&org_name='+data.org_name);
+            angular.forEach(data.department_list, function(item){
+                console.log(item.admin);
+                console.log(item.department_id);
+                console.log(item.department_name);
+                console.log(item);
+                $scope.department.push(item);
+                console.log($scope.department);
+                /*console.log(department[1]);
+                console.log(department[2]);*/
+            })
 
         }).error(function (error) {
             console.log("inside error");
@@ -34,7 +46,7 @@ login.controller('admincontroller', function($scope, $window ,$http) {
             console.log("unexpected_error");
         });
     };
-    
+
     $scope.addDept = function() {
         console.log("inside submit");
         console.log("Department Name ::" + $scope.dept_name);
@@ -56,14 +68,12 @@ login.controller('admincontroller', function($scope, $window ,$http) {
                 console.log(data);
                 // Setting up the session variable.
                 // req.session.email=data.email;
-               window.location.assign('/orgAdminDashBoard?admin_email=' + data.admin_email);
-
+               window.location.assign('/orgAdminDashBoard?admin_email=' + data.admin_email+'&org_name='+orgname);
             }).error(function (error) {
                 console.log("inside error");
                 console.log(error);
                 console.log("unexpected_error");
             });
-
     };
 
     $scope.addRole = function() {
@@ -83,11 +93,10 @@ login.controller('admincontroller', function($scope, $window ,$http) {
         }).success(function (data) {
 
             console.log("inside success");
-            console.log(data);
+            console.log("organization name in "+ orgname);
             // Setting up the session variable.
             // req.session.email=data.email;
-            window.location.assign('/orgAdminDashBoard?admin_email=' + data.admin_email);
-
+            window.location.assign('/orgAdminDashBoard?admin_email=' + data.admin_email+'&org_name='+orgname);
         }).error(function (error) {
             console.log("inside error");
             console.log(error);
@@ -95,6 +104,10 @@ login.controller('admincontroller', function($scope, $window ,$http) {
         });
 
     };
+
+
+
+// Department Admin  services
 
     $scope.createRequestType= function(){
 
@@ -128,9 +141,7 @@ login.controller('admincontroller', function($scope, $window ,$http) {
     };
 
     $scope.createWorkflow = function() {
-
         console.log("inside createWorkflow js");
-
         $http({
             method: "post",
             header:{
@@ -163,5 +174,70 @@ login.controller('admincontroller', function($scope, $window ,$http) {
         });
 
     };
+
+    $scope.update = function() {
+        console.log("inside update function");
+        $http({
+            method: "post",
+            header:{
+                'Accept':'application/json',
+                'Content-Type': 'application/json'
+            },
+            url:'http://localhost:8080/updateEmail',
+            data: JSON.stringify({
+                    "current_email_id": $scope.current_email,
+                     "new_email_id": $scope.new_email,
+                     "org_name": $scope.org_name
+            })
+        }).success(function (data) {
+
+            console.log("inside success");
+            console.log(data);
+            console.log(data.email_id);
+
+            window.location.assign('/');
+
+        }).error(function (error) {
+            console.log("inside error");
+            console.log(error);
+            console.log("unexpected_error");
+        });
+
+    };
+
+    $scope.delete = function(org_name,email_id) {
+        console.log("inside update function");
+        $http({
+            method: "post",
+            header:{
+                'Accept':'application/json',
+                'Content-Type': 'application/json'
+            },
+            url:'http://localhost:8080/deleteEmail',
+            data: JSON.stringify({
+                "email_id":email_id,
+                "org_name": org_name
+            })
+        }).success(function (data) {
+
+            console.log("inside success");
+            console.log(data);
+            console.log(data.email_id);
+            console.log("Organization"+org_name);
+            console.log("email"+email_id);
+            window.location.assign('/');
+
+        }).error(function (error) {
+            console.log("inside error");
+            console.log(error);
+            console.log("unexpected_error");
+        });
+
+    };
+
+    $scope.cancel = function(){
+        window.location.assign('/deptAdminDashBoard');
+    }
+
 
 })

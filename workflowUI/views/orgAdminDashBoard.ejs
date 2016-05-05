@@ -41,18 +41,14 @@
 
     <script src="angularjs/adminDashBoard.js">
 
-
-
-
     </script>
 
 </head>
-<body ng-app="admin" ng-controller="admincontroller" data-ng-init="init('<%=org_name%>')" background="https://s-media-cache-ak0.pinimg.com/736x/d8/af/16/d8af16fc52ff045592306f1c74f11011.jpg">
-
+<!-- background="https://s-media-cache-ak0.pinimg.com/736x/d8/af/16/d8af16fc52ff045592306f1c74f11011.jpg"-->
+<body ng-app="admin" ng-controller="admincontroller" data-ng-init="init('<%=org_name%>','<%=email%>')" style="background-color: #b7c3f0">
 <nav class="navbar navbar-inverse">
     <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
-
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
                 <span class="sr-only">Toggle navigation</span>
@@ -64,20 +60,19 @@
         </div>
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <ul class="nav navbar-nav navbar-right" >
+            <ul class="nav navbar-nav navbar-right"  >
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <span class="glyphicon glyphicon-user" aria-hidden="true"></span> <span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#">About Us</a></li>
-                        <li><a href="#">Sign Out</a></li>
-
+                    <ul class="dropdown-menu" style="background-color: #2e2e2e">
+                        <li><button type="button" id="createDept" class="btn btn-info btn-block"  style="background-color: #2e2e2e" data-toggle="modal" data-target="#updateEmailModal">Update Email</button></li>
+                        <li><button type="button" id="createDept" class="btn btn-info btn-block" style="background-color: #2e2e2e" data-toggle="modal" data-target="#deleteEmailModal">Delete Account</button></li>
+                        <li><button type="button" id="createDept" class="btn btn-info btn-block" style="background-color: #2e2e2e" data-toggle="modal" data-target="#signOutModal">Sign out</button></li>
                     </ul>
                 </li>
             </ul>
         </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
 </nav>
-
 <div class="container-fluid">
     <div class="row content">
         <div class="col-sm-2 sidenav" >
@@ -103,6 +98,15 @@
                         <th>Department Admin</th>
                     </tr>
                     </thead>
+                    <tbody>
+                        <tr ng-repeat= "item in department">
+                            <td>{{item.department_id}}</td>
+                            <td>{{item.department_name}}</td>
+                            <td>{{item.admin}}</td>
+                        </tr>
+                    </tbody>
+
+
 
                 </table>
             </div>
@@ -162,8 +166,6 @@
         </div>
     </div>
 </div>
-
-
 
 </body>
 </html>

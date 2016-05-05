@@ -11,6 +11,7 @@ login.controller('signupcontroller', function($scope, $window ,$http) {
         console.log("inside register");
 
         if(usecase=='orgAdmin'){
+            console.log("org_Admin");
         $http({
             method : "post",
             header:{
@@ -36,6 +37,8 @@ login.controller('signupcontroller', function($scope, $window ,$http) {
 
         }
         else if(usecase=='user'){
+
+            console.log("user");
             $http({
                 method : "post",
                 header:{
@@ -66,6 +69,9 @@ login.controller('signupcontroller', function($scope, $window ,$http) {
         }
 
         else{
+
+            console.log("admin");
+            
             $http({
                 method : "post",
                 header:{

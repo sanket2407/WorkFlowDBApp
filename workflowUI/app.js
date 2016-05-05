@@ -8,13 +8,22 @@ var bodyParser = require('body-parser');
 
 var routes = require('./routes');
 var checkLogin = require('./routes/checkLogin');
-var adminlogin = require('./routes/adminlogin');
-var userLogin = require('./routes/userLogin');
+var orgAdminDashBoard = require('./routes/orgAdminDashBoard');
+var deptAdminDashboard = require('./routes/deptAdminDashboard');
+var next = require('./routes/next');
+var userDashboard = require('./routes/userDashboard');
 var homepage=require('./routes/homepage');
 var orgAdminSignUp = require('./routes/orgAdminSignUp');
 var userSignUp = require('./routes/userSignUp');
+var adminSignUp = require('./routes/adminSignUp');
 
+
+//var expressSession = require("express-session");
+//client-session
+var session = require('client-sessions');
 var app = express();
+
+/*var FileStore = require('session-file-store')(expressSession);*/
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -29,11 +38,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(app.router);
 
 app.get('/',homepage.index);
-app.get('/adminLogin', adminlogin.loginPage);
-app.get('/userLogin', userLogin.loginPage);
+app.get('/orgAdminDashBoard', orgAdminDashBoard.loginPage);
+app.get('/userDashboard', userDashboard.loginPage);
+app.get('/deptAdminDashboard',deptAdminDashboard.loginPage);
+app.get('/next',next.nextLevel);
 app.post('/checklogin', checkLogin.checklogin);
 app.get('/orgAdminSignUp', orgAdminSignUp.loginPage);
 app.get('/userSignUp', userSignUp.loginPage);
+app.get('/adminSignUp', adminSignUp.loginPage);
 
 
 /// catch 404 and forwarding to error handler
@@ -65,6 +77,26 @@ app.use(function(err, req, res, next) {
         error: {}
     });
 });
+
+//EXPRESS SESSION CONFIG
+/*
+app.use(expressSession({
+    key: 'workflowid',
+    secret: 'workflow',
+    resave: true,
+    saveUninitialized: true,
+    store: new FileStore()
+}));
+*/
+
+// all environments
+//configure the sessions with our application
+
+app.use(session({
+    cookieName: 'session',
+    secret: 'workflow',
+    duration: 30 * 60 * 1000,    //setting the time for active session
+    activeDuration: 5 * 60 * 1000,  })); // setting time for the session to be active when the window is open // 5 minutes set currently
 
 
 module.exports = app;

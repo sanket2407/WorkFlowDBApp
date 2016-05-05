@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>TestModal</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src= "http://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+
+
+    <style>
+
+
+        .modal-body .form-horizontal .col-sm-2,
+        .modal-body .form-horizontal .col-sm-10 {
+            width: 100%
+        }
+
+        .modal-body .form-horizontal .control-label {
+            text-align: center;
+            font-size: 200%
+        }
+        .modal-body .form-horizontal .col-sm-offset-2 {
+            margin-left: 50px;
+        }
+
+
+
+    </style>
+
+</head>
+<body background="http://directlinedev.com/media/services/header/header_background_30.jpeg">
+
+<!-- Button trigger modal -->
+<button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#Level_0" style="margin-top: 260px;margin-left:550px;background-color: #ff8c1a ">
+    Select your Workers
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="Level_0" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <button type="button" class="close"
+                        data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    Level 0
+                </h4>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body">
+
+                <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label  class="col-sm-2 control-label"
+                                for="inputEmail3">Select Worker</label> <br><br>
+                        <div class="col-sm-10" >
+                            <div class="dropdown" align="center">
+                                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"> Workers
+                                    <span class="caret"></span>
+                                </button>
+
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" style="margin-left: 200px;text-align: center;">
+                                    <li><a href="#">Harsh</a></li>
+                                    <li><a href="#">Sanket</a></li>
+                                    <li><a href="#">Akshay</a></li>
+                                </ul>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+
+
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="addlevel()">
+                    Next
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function addlevel()
+    {
+
+        var current_level= parseInt(document.getElementById('level_cnt').value);
+        var new_level_no = current_level+1;
+        var nextlevel =  "<div class="modal fade" id='Level_"+new_level_no+"' tabindex="-1" role="dialog" \
+     aria-labelledby="myModalLabel" aria-hidden="true"> \
+    <div class="modal-dialog">\
+        <div class="modal-content">\
+            <!-- Modal Header -->\
+            <div class="modal-header">\
+                <button type="button" class="close" \
+                   data-dismiss="modal">\
+                       <span aria-hidden="true">&times;</span>\
+                       <span class="sr-only">Close</span>\
+                </button>\
+                <h4 class="modal-title" id="myModalLabel">\
+                    Level 0\
+                </h4>\
+            </div>\
+            \
+            <!-- Modal Body -->\
+            <div class="modal-body">\
+               \
+                <form class="form-horizontal" role="form">\
+                  <div class="form-group">\
+                    <label  class="col-sm-2 control-label"\
+                              for="inputEmail3">Select Worker</label> <br><br>\
+                    <div class="col-sm-10" >\
+                        <div class="dropdown" align="center">\
+                          <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"> Workers\
+                            <span class="caret"></span>\
+                          </button>\
+                            \
+                              <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" style="margin-left: 200px;text-align: center;">\
+                              <li><a href="#">Harsh</a></li>\
+                              <li><a href="#">Sanket</a></li>\
+                              <li><a href="#">Akshay</a></li>\
+                              </ul>\
+                            \
+                        </div>\
+                    </div>\
+                  </div>\
+\
+                </form>\
+\
+              </div>\
+            \
+            <!-- Modal Footer -->\
+    <div class="modal-footer">\
+    <button type="button" class="btn btn-primary" onclick="addlevel()">\
+                            Next\
+    \
+    </div>\
+    </div>\
+    </div>\
+    </div>";
+
+        $(nextlevel).insertAfter('#Level_'+current_level);
+        document.getElementById('level_cnt').value = new_level_no;
+
+    }
+
+
+
+
+</script>
+
+
+
+<input type="hidden" value=0 id="level_cnt"/>
+
+
+
+
+
+
+
+</body>
+
+
+</html>

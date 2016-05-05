@@ -55,14 +55,14 @@ login.controller('homecontroller', function($scope, $window ,$http) {
                     "password":$scope.password,
                     "org_name":$scope.org_name
                 })
-            }).success(function (data) {
+            }).success(function(data) {
 
                 console.log("inside admin success");
 
                 if(usecase=='admin')
                     window.location.assign('/deptAdminDashboard?email_id=' + data.email_id+'&org_name='+data.org_name);
                 else
-                    window.location.assign('/userDashboard?email_id=' + data.email_id+'&org_name='+data.org_name);
+                    window.location.assign('/userDashboard?email_id=' + data.email_id +'&org_name='+data.org_name+'&dept_id='+data.dept_id+'&org_id='+data.org_id);
             }).error(function (error) {
                 console.log("inside error");
                 console.log(error);

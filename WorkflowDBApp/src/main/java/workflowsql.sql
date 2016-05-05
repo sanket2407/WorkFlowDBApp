@@ -122,6 +122,8 @@ CREATE TABLE `workflow`.`phonetbl` (
   
 USE workflow;
 
+#Triggers
+
 DELIMITER $$
 CREATE TRIGGER before_workflowinstance_update 
     BEFORE UPDATE ON workflowinstance
@@ -156,6 +158,8 @@ FOR EACH ROW BEGIN
 END$$
 DELIMITER ;
 
+#Stored Procedure
+
 DROP procedure IF EXISTS `time_duration`;
 DELIMITER $$
 USE `workflow`$$
@@ -169,6 +173,24 @@ END
 $$
 
 DELIMITER ;
+
+#views
+
+CREATE  OR REPLACE VIEW `user_dashboard` AS
+select rt1.dept_id, rt1.org_id, rt1.email_id, rt2.workflow_instance_id, rt1.workflow_id, rt1.name, rt1.description as description1, rt2.description as description2, rt2.status_id, rt2.level_id, rt2.layer_id, rt2.timestamp from 
+(SELECT t1.workflow_id, t1.email_id, t1.org_id, t1.dept_id, t1.description, t2.name FROM workflow.workflow_master as t1 join workflow.request_type as t2 on t1.request_type_id=t2.request_type_id) as rt1 
+join
+workflow.workflowinstance as rt2 
+on
+rt1.workflow_id = rt2.workflow_id;
+;
+
+CREATE  OR REPLACE VIEW `workflow_instance_status` AS
+select rt1.email_id, rt1.org_id, rt1.workflow_instance_id, rt1.workflow_id, rt1.level_id, rt1.layer_id, rt1.status_id, rt1.timestamp, rt2.name, rt2.description from 
+(select t1.email_id, t1.org_id, t2.workflow_instance_id, t2.workflow_id, t2.level_id, t2.layer_id, t2.status_id, t2.timestamp from workflow.workflowtbl as t1 join workflow.workflowinstance as t2 on t1.workflow_id = t2.workflow_id ) as rt1
+join 
+workflow.status as rt2 on rt1.status_id = rt2.status_id;
+
 
 INSERT INTO organization ( name, address, admin_email, password ) VALUES ('Microsoft','Seattle','micro@micro.com','21232f297a57a5a743894a0e4a801fc3');  
 INSERT INTO department ( name, org_id ) VALUES ('Software','1');
@@ -226,19 +248,4 @@ INSERT INTO workflowinstance ( workflow_instance_id, workflow_id, level_id, laye
 INSERT INTO workflowinstance ( workflow_instance_id, workflow_id, level_id, layer_id, status_id, description ) VALUES ('1','1','2','2','2','Assigned!  layer 1 for code review workflow for level 1');
 
 UPDATE workflowinstance SET status_id='4' , description = 'Pending! Working on request..!' WHERE workflow_instance_id = '1' and  workflow_id = '1' and level_id = '2' and layer_id = '1';
-
-CREATE  OR REPLACE VIEW `user_dashboard` AS
-select rt1.dept_id, rt1.org_id, rt1.email_id, rt2.workflow_instance_id, rt1.workflow_id, rt1.name, rt1.description as description1, rt2.description as description2, rt2.status_id, rt2.level_id, rt2.layer_id, rt2.timestamp from 
-(SELECT t1.workflow_id, t1.email_id, t1.org_id, t1.dept_id, t1.description, t2.name FROM workflow.workflow_master as t1 join workflow.request_type as t2 on t1.request_type_id=t2.request_type_id) as rt1 
-join
-workflow.workflowinstance as rt2 
-on
-rt1.workflow_id = rt2.workflow_id;
-;
-
-CREATE  OR REPLACE VIEW `workflow_instance_status` AS
-select rt1.email_id, rt1.org_id, rt1.workflow_instance_id, rt1.workflow_id, rt1.level_id, rt1.layer_id, rt1.status_id, rt1.timestamp, rt2.name, rt2.description from 
-(select t1.email_id, t1.org_id, t2.workflow_instance_id, t2.workflow_id, t2.level_id, t2.layer_id, t2.status_id, t2.timestamp from workflow.workflowtbl as t1 join workflow.workflowinstance as t2 on t1.workflow_id = t2.workflow_id ) as rt1
-join 
-workflow.status as rt2 on rt1.status_id = rt2.status_id;
-
+UPDATE workflowinstance SET status_id='3' , description = 'Unassigned! Request is in unassigned state.' WHERE workflow_instance_id = '1' and  workflow_id = '1' and level_id = '2' and layer_id = '2';

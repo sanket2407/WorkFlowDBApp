@@ -1040,6 +1040,24 @@ public class HelloController {
 			takeRequest.setPrev_status("Assigned");
 			takeRequest.setPrev_status_id(helper.getStatusIDFromStatusName(takeRequest.getPrev_status()));
 
+			// ----------
+
+			List<Integer> layer_ids = helper.getAllAlternateApprovers(takeRequest.getWorkflow_instance_id(),
+					takeRequest.getWorkflow_id(), takeRequest.getLevel_id(), takeRequest.getLayer_id());
+
+			for (int layer_id : layer_ids) {
+				int status_id = helper.getStatusIDFromStatusName("Unassigned");
+				sql = " UPDATE workflowinstance SET status_id='" + status_id
+						+ "' , description = 'Unassigned! Request is in unassigned state.' WHERE workflow_instance_id = '"
+						+ takeRequest.getWorkflow_instance_id() + "' and  workflow_id = '"
+						+ takeRequest.getWorkflow_id() + "' and level_id = '" + takeRequest.getLevel_id()
+						+ "' and layer_id = '" + layer_id + "' ";
+
+				System.out.println(sql);
+				stmt1.executeUpdate(sql);
+			}
+			// -----------
+
 			Object obj = new Object();
 			synchronized (obj) {
 
@@ -1656,7 +1674,8 @@ public class HelloController {
 	}
 
 	/*
-	 * {"email_id": "bill@microsoft.com", "org_name": "Microsoft", "dept_id": "1"}
+	 * {"email_id": "bill@microsoft.com", "org_name": "Microsoft", "dept_id":
+	 * "1"}
 	 */
 	@RequestMapping(value = "/getStatsUserDashBoard", method = RequestMethod.POST)
 	@ResponseBody
@@ -1667,22 +1686,38 @@ public class HelloController {
 		Connection conn = dbCon.getConnection();
 		Statement stmt = null;
 		getStatsUserDashBoard.setOrg_id(helper.getOrgIDFromOrgName(getStatsUserDashBoard.getOrg_name()));
-		
+
 		List<Map<String, Object>> user_dashboard_stats = new ArrayList<Map<String, Object>>();
 
 		try {
 
 			stmt = conn.createStatement();
 			String sql;
-			//sql = "select rt2.workflow_instance_id, rt1.workflow_id, rt1.name, rt1.description as description1, rt2.description as description2, rt2.status_id, rt2.level_id, rt2.layer_id, rt2.timestamp from (SELECT t1.workflow_id, t1.email_id, t1.org_id, t1.dept_id, t1.description, t2.name FROM workflow.workflow_master as t1 join workflow.request_type as t2 on t1.request_type_id=t2.request_type_id where t1.email_id = '"+getStatsUserDashBoard.getEmail_id()+"' and t1.org_id = '"+getStatsUserDashBoard.getOrg_id()+"' and dept_id = '"+getStatsUserDashBoard.getDept_id()+"') as rt1 join workflow.workflowinstance as rt2 on rt1.workflow_id = rt2.workflow_id where rt1.email_id = '"+getStatsUserDashBoard.getEmail_id()+"' and rt1.org_id = '"+getStatsUserDashBoard.getOrg_id()+"' and rt1.dept_id = '"+getStatsUserDashBoard.getDept_id()+"'";
-			sql = "SELECT workflow_instance_id, workflow_id, name, description1, description2, status_id, level_id, layer_id, timestamp FROM workflow.user_dashboard where email_id = '"+getStatsUserDashBoard.getEmail_id()+"' and dept_id = '"+getStatsUserDashBoard.getDept_id()+"' and org_id = '"+getStatsUserDashBoard.getOrg_id()+"'";
+			// sql = "select rt2.workflow_instance_id, rt1.workflow_id,
+			// rt1.name, rt1.description as description1, rt2.description as
+			// description2, rt2.status_id, rt2.level_id, rt2.layer_id,
+			// rt2.timestamp from (SELECT t1.workflow_id, t1.email_id,
+			// t1.org_id, t1.dept_id, t1.description, t2.name FROM
+			// workflow.workflow_master as t1 join workflow.request_type as t2
+			// on t1.request_type_id=t2.request_type_id where t1.email_id =
+			// '"+getStatsUserDashBoard.getEmail_id()+"' and t1.org_id =
+			// '"+getStatsUserDashBoard.getOrg_id()+"' and dept_id =
+			// '"+getStatsUserDashBoard.getDept_id()+"') as rt1 join
+			// workflow.workflowinstance as rt2 on rt1.workflow_id =
+			// rt2.workflow_id where rt1.email_id =
+			// '"+getStatsUserDashBoard.getEmail_id()+"' and rt1.org_id =
+			// '"+getStatsUserDashBoard.getOrg_id()+"' and rt1.dept_id =
+			// '"+getStatsUserDashBoard.getDept_id()+"'";
+			sql = "SELECT workflow_instance_id, workflow_id, name, description1, description2, status_id, level_id, layer_id, timestamp FROM workflow.user_dashboard where email_id = '"
+					+ getStatsUserDashBoard.getEmail_id() + "' and dept_id = '" + getStatsUserDashBoard.getDept_id()
+					+ "' and org_id = '" + getStatsUserDashBoard.getOrg_id() + "'";
 			ResultSet rs = stmt.executeQuery(sql);
 			System.out.println(sql);
 
 			while (rs.next()) {
 
 				Map<String, Object> temp = new HashMap<String, Object>();
-				
+
 				int workflow_instance_id = rs.getInt("workflow_instance_id");
 				int workflow_id = rs.getInt("workflow_id");
 				String request_name = rs.getString("name");
@@ -1694,17 +1729,17 @@ public class HelloController {
 				int layer_id = rs.getInt("layer_id");
 				String timestamp = rs.getString("timestamp");
 				String duration = "";
-				
+
 				Connection conn1 = dbCon.getConnection();
 				Statement stmt1 = conn1.createStatement();
-				String sql1 = "call time_duration('"+timestamp+"')";
+				String sql1 = "call time_duration('" + timestamp + "')";
 				ResultSet rs1 = stmt1.executeQuery(sql1);
 				System.out.println(sql1);
 
 				while (rs1.next()) {
 					duration = rs1.getString("duration_in_minute");
 				}
-				
+
 				temp.put("workflow_instance_id", workflow_instance_id);
 				temp.put("workflow_id", workflow_id);
 				temp.put("request_name", request_name);
@@ -1724,7 +1759,7 @@ public class HelloController {
 			System.out.println("user dashboard stats : " + user_dashboard_stats);
 
 			getStatsUserDashBoard.setUser_dashboard_stats(user_dashboard_stats);
-			
+
 			rs.close();
 			stmt.close();
 			conn.close();
@@ -1750,32 +1785,35 @@ public class HelloController {
 		return new ResponseEntity<Object>(getStatsUserDashBoard, HttpStatus.OK);
 	}
 
-	
 	/*
 	 * {"email_id": "bill@microsoft.com", "org_name": "Microsoft"}
 	 */
 	@RequestMapping(value = "/getAllAssignedAndPendingRequests", method = RequestMethod.POST)
 	@ResponseBody
-	public ResponseEntity<Object> getAllAssignedAndPendingRequests(@RequestBody GetAllAssignedAndPendingRequests getAllAssignedAndPendingRequests) {
+	public ResponseEntity<Object> getAllAssignedAndPendingRequests(
+			@RequestBody GetAllAssignedAndPendingRequests getAllAssignedAndPendingRequests) {
 
 		Helper helper = new Helper();
 		DBConnection dbCon = new DBConnection();
 		Connection conn = dbCon.getConnection();
 		Statement stmt = null;
-		getAllAssignedAndPendingRequests.setOrg_id(helper.getOrgIDFromOrgName(getAllAssignedAndPendingRequests.getOrg_name()));
+		getAllAssignedAndPendingRequests
+				.setOrg_id(helper.getOrgIDFromOrgName(getAllAssignedAndPendingRequests.getOrg_name()));
 		List<Map<String, Object>> assigned_or_pending_req_list = new ArrayList<Map<String, Object>>();
 
 		try {
 
 			stmt = conn.createStatement();
-			String sql = "SELECT workflow_instance_id, workflow_id, email_id, org_id, level_id, layer_id, status_id, name, description, timestamp FROM workflow.workflow_instance_status where email_id = '"+getAllAssignedAndPendingRequests.getEmail_id()+"' and org_id = '"+getAllAssignedAndPendingRequests.getOrg_id()+"' and (name = 'Assigned' or name = 'Pending')";
+			String sql = "SELECT workflow_instance_id, workflow_id, email_id, org_id, level_id, layer_id, status_id, name, description, timestamp FROM workflow.workflow_instance_status where email_id = '"
+					+ getAllAssignedAndPendingRequests.getEmail_id() + "' and org_id = '"
+					+ getAllAssignedAndPendingRequests.getOrg_id() + "' and (name = 'Assigned' or name = 'Pending')";
 			ResultSet rs = stmt.executeQuery(sql);
 			System.out.println(sql);
 
 			while (rs.next()) {
 
 				Map<String, Object> temp = new HashMap<String, Object>();
-				
+
 				int workflow_instance_id = rs.getInt("workflow_instance_id");
 				int workflow_id = rs.getInt("workflow_id");
 				String email_id = rs.getString("email_id");
@@ -1787,7 +1825,7 @@ public class HelloController {
 				String status_name = rs.getString("name");
 				String description = rs.getString("description");
 				String timestamp = rs.getString("timestamp");
-			
+
 				temp.put("workflow_instance_id", workflow_instance_id);
 				temp.put("workflow_id", workflow_id);
 				temp.put("email_id", email_id);
@@ -1801,13 +1839,12 @@ public class HelloController {
 				temp.put("timestamp", timestamp);
 
 				assigned_or_pending_req_list.add(temp);
-
 			}
 
 			System.out.println("user Assigned or Pending requests : " + assigned_or_pending_req_list);
 
 			getAllAssignedAndPendingRequests.setAssigned_or_pending_req_list(assigned_or_pending_req_list);
-			
+
 			rs.close();
 			stmt.close();
 			conn.close();
@@ -1833,8 +1870,6 @@ public class HelloController {
 		return new ResponseEntity<Object>(getAllAssignedAndPendingRequests, HttpStatus.OK);
 	}
 
-	
-	
 	// ==========================================================
 
 	@RequestMapping(value = "/test", method = RequestMethod.POST)

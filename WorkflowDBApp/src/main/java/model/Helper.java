@@ -6,6 +6,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import databaseConnection.DBConnection;
 
@@ -749,6 +751,49 @@ public class Helper {
 		return sb.toString();
 	}
 	
-	
+	public List<Integer> getAllAlternateApprovers(int workflow_instance_id, int workflow_id, int level_id, int layer_id) {
+
+		dbCon = new DBConnection();
+		conn = dbCon.getConnection();
+		Statement stmt = null;
+		List<Integer> layer_ids = new ArrayList<Integer>();
+		try {
+
+			stmt = conn.createStatement();
+			String sql;
+			sql = "select layer_id from workflow.workflowinstance where workflow_instance_id = '"+workflow_instance_id+"' and workflow_id= '"+workflow_id+"' and level_id = '"+level_id+"' and layer_id != '"+layer_id+"'";
+			ResultSet rs = stmt.executeQuery(sql);
+			System.out.println(sql);
+			
+			while (rs.next()) {
+				// Retrieve by column name
+				System.out.println(">>> getAllAlternateApprovers got layer id: " + rs.getInt("layer_id"));
+				layer_ids.add(rs.getInt("layer_id"));
+			}
+			
+			rs.close();
+			stmt.close();
+			conn.close();
+		} catch (Exception e) {
+			// Handle errors for Class.forName
+			e.printStackTrace();
+		} finally {
+			// finally block used to close resources
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException se1) {
+				se1.printStackTrace();
+			} // nothing we can do
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException se2) {
+				se2.printStackTrace();
+			} // end finally try
+		} // end try
+
+		return layer_ids;
+	}
 
 }

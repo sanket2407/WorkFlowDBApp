@@ -229,10 +229,16 @@ UPDATE workflowinstance SET status_id='4' , description = 'Pending! Working on r
 
 CREATE  OR REPLACE VIEW `user_dashboard` AS
 select rt1.dept_id, rt1.org_id, rt1.email_id, rt2.workflow_instance_id, rt1.workflow_id, rt1.name, rt1.description as description1, rt2.description as description2, rt2.status_id, rt2.level_id, rt2.layer_id, rt2.timestamp from 
-(SELECT t1.workflow_id, t1.email_id, t1.org_id, t1.dept_id, t1.description, t2.name FROM workflow.workflow_master as t1 join workflow.request_type as t2 on t1.request_type_id=t2.request_type_id 
-where t1.email_id = "bill@microsoft.com" and t1.org_id = 1 and dept_id = 1) as rt1 
+(SELECT t1.workflow_id, t1.email_id, t1.org_id, t1.dept_id, t1.description, t2.name FROM workflow.workflow_master as t1 join workflow.request_type as t2 on t1.request_type_id=t2.request_type_id) as rt1 
 join
 workflow.workflowinstance as rt2 
 on
 rt1.workflow_id = rt2.workflow_id;
 ;
+
+CREATE  OR REPLACE VIEW `workflow_instance_status` AS
+select rt1.email_id, rt1.org_id, rt1.workflow_instance_id, rt1.workflow_id, rt1.level_id, rt1.layer_id, rt1.status_id, rt1.timestamp, rt2.name, rt2.description from 
+(select t1.email_id, t1.org_id, t2.workflow_instance_id, t2.workflow_id, t2.level_id, t2.layer_id, t2.status_id, t2.timestamp from workflow.workflowtbl as t1 join workflow.workflowinstance as t2 on t1.workflow_id = t2.workflow_id ) as rt1
+join 
+workflow.status as rt2 on rt1.status_id = rt2.status_id;
+

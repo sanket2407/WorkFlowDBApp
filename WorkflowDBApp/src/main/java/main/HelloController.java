@@ -1655,7 +1655,7 @@ public class HelloController {
 	}
 
 	/*
-	 * {"email_id": "bill@microsoft.com", "org_id": "1", "dept_id": "1"}
+	 * {"email_id": "bill@microsoft.com", "org_name": "Microsoft", "dept_id": "1"}
 	 */
 	@RequestMapping(value = "/getStatsUserDashBoard", method = RequestMethod.POST)
 	@ResponseBody
@@ -1665,7 +1665,8 @@ public class HelloController {
 		DBConnection dbCon = new DBConnection();
 		Connection conn = dbCon.getConnection();
 		Statement stmt = null;
-
+		getStatsUserDashBoard.setOrg_id(helper.getOrgIDFromOrgName(getStatsUserDashBoard.getOrg_name()));
+		
 		List<Map<String, Object>> user_dashboard_stats = new ArrayList<Map<String, Object>>();
 
 		try {
@@ -1748,6 +1749,103 @@ public class HelloController {
 		return new ResponseEntity<Object>(getStatsUserDashBoard, HttpStatus.OK);
 	}
 
+	
+//	SELECT * FROM workflow.workflow_instance_status	where email_id = 'chinu@microsoft.com' and org_id = '1' and name = 'Assigned';
+	
+	/*
+	 * {"email_id": "bill@microsoft.com", "org_id": "1"}
+	 */
+	@RequestMapping(value = "/dad", method = RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity<Object> dasd(@RequestBody GetStatsUserDashBoard getStatsUserDashBoard) {
+
+		Helper helper = new Helper();
+		DBConnection dbCon = new DBConnection();
+		Connection conn = dbCon.getConnection();
+		Statement stmt = null;
+
+		List<Map<String, Object>> user_dashboard_stats = new ArrayList<Map<String, Object>>();
+
+		try {
+
+			stmt = conn.createStatement();
+			String sql = "SELECT * FROM workflow.workflow_instance_status	where email_id = 'chinu@microsoft.com' and org_id = '1' and name = 'Assigned';";
+			ResultSet rs = stmt.executeQuery(sql);
+			System.out.println(sql);
+
+			while (rs.next()) {
+
+				Map<String, Object> temp = new HashMap<String, Object>();
+				
+				int workflow_instance_id = rs.getInt("workflow_instance_id");
+				int workflow_id = rs.getInt("workflow_id");
+				String request_name = rs.getString("name");
+				String description1 = rs.getString("description1");
+				String description2 = rs.getString("description2");
+				int status_id = rs.getInt("status_id");
+				String status_name = helper.getStatusNameFromStatusID(status_id);
+				int level_id = rs.getInt("level_id");
+				int layer_id = rs.getInt("layer_id");
+				String timestamp = rs.getString("timestamp");
+				String duration = "";
+				
+				Connection conn1 = dbCon.getConnection();
+				Statement stmt1 = conn1.createStatement();
+				String sql1 = "call time_duration('"+timestamp+"')";
+				ResultSet rs1 = stmt1.executeQuery(sql1);
+				System.out.println(sql1);
+
+				while (rs1.next()) {
+					duration = rs1.getString("duration_in_minute");
+				}
+				
+				temp.put("workflow_instance_id", workflow_instance_id);
+				temp.put("workflow_id", workflow_id);
+				temp.put("request_name", request_name);
+				temp.put("description1", description1);
+				temp.put("description2", description2);
+				temp.put("status_id", status_id);
+				temp.put("status_name", status_name);
+				temp.put("level_id", level_id);
+				temp.put("layer_id", layer_id);
+				temp.put("timestamp", timestamp);
+				temp.put("duration", duration);
+
+				user_dashboard_stats.add(temp);
+
+			}
+
+			System.out.println("user dashboard stats : " + user_dashboard_stats);
+
+			getStatsUserDashBoard.setUser_dashboard_stats(user_dashboard_stats);
+			
+			rs.close();
+			stmt.close();
+			conn.close();
+		} catch (Exception e) {
+			// Handle errors for Class.forName
+			e.printStackTrace();
+		} finally {
+			// finally block used to close resources
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException se1) {
+				se1.printStackTrace();
+			} // nothing we can do
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException se2) {
+				se2.printStackTrace();
+			} // end finally try
+		} // end try
+
+		return new ResponseEntity<Object>(getStatsUserDashBoard, HttpStatus.OK);
+	}
+
+	
+	
 	// ==========================================================
 
 	@RequestMapping(value = "/test", method = RequestMethod.POST)

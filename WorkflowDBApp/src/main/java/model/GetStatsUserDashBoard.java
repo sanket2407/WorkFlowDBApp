@@ -6,10 +6,17 @@ import java.util.Map;
 public class GetStatsUserDashBoard {
 	
 	private String email_id = "";
+	private String org_name = "";
 	private int org_id;
 	private int dept_id;
 	private List<Map<String, Object>> user_dashboard_stats;
 	
+	public String getOrg_name() {
+		return org_name;
+	}
+	public void setOrg_name(String org_name) {
+		this.org_name = org_name;
+	}
 	public String getEmail_id() {
 		return email_id;
 	}

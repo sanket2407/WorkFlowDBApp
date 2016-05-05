@@ -26,6 +26,7 @@ import model.AllOrganizations;
 import model.AllUnassignedDepartments;
 import model.AllUsers;
 import model.ApproveRequest;
+import model.DeleteEmail;
 import model.Department;
 import model.Helper;
 import model.Layer;
@@ -1528,6 +1529,57 @@ public class HelloController {
 		} // end try
 
 		return new ResponseEntity<Object>(updateEmail, HttpStatus.OK);
+	}
+	
+	
+	/*
+	 * {"email_id": "bill@microsoft.com", "org_name": "Microsoft"}
+	 */
+	@RequestMapping(value = "/deleteEmail", method = RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity<Object> deleteEmail(@RequestBody DeleteEmail deleteEmail) {
+
+		Helper helper = new Helper();
+		DBConnection dbCon = new DBConnection();
+		Connection conn = dbCon.getConnection();
+		Statement stmt = null;
+
+		deleteEmail.setOrg_id(helper.getOrgIDFromOrgName(deleteEmail.getOrg_name()));
+
+		try {
+
+			stmt = conn.createStatement();
+			String sql;
+			
+			sql = "DELETE FROM `workflow`.`user` WHERE `email_id`='"+ deleteEmail.getEmail_id()+"' and`org_id`='"+ deleteEmail.getOrg_id() +"'";
+			
+			stmt.executeUpdate(sql);
+			System.out.println(sql);
+			
+			System.out.println(">>> email id : "+ deleteEmail.getEmail_id() +" deleted!");
+
+			stmt.close();
+			conn.close();
+		} catch (Exception e) {
+			// Handle errors for Class.forName
+			e.printStackTrace();
+		} finally {
+			// finally block used to close resources
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException se1) {
+				se1.printStackTrace();
+			} // nothing we can do
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException se2) {
+				se2.printStackTrace();
+			} // end finally try
+		} // end try
+
+		return new ResponseEntity<Object>(deleteEmail, HttpStatus.OK);
 	}
 	
 	// ==========================================================

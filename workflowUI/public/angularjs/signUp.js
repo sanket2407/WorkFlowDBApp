@@ -6,6 +6,11 @@ var login = angular.module('signup', []);
 
 login.controller('signupcontroller', function($scope, $window ,$http) {
 
+    $scope.signOut = function(){
+
+        window.location.assign("/");
+    };
+
     $scope.register = function(usecase) {
 
         console.log("inside register");
@@ -102,4 +107,7 @@ login.controller('signupcontroller', function($scope, $window ,$http) {
 
         }
     };
+
+
+
 })

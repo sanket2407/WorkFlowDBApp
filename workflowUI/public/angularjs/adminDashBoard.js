@@ -8,6 +8,11 @@ var email;
 
 login.controller('admincontroller', function($scope, $window ,$http) {
 
+    $scope.signOut = function(){
+
+        window.location.assign("/");
+    };
+
     $scope.department = [];
 // Organization Admin  services
     $scope.init = function(org_name,email_id){

@@ -19,6 +19,10 @@ login.controller('usercontroller', function($scope, $window ,$http) {
     $scope.request_list=[];
     $scope.asp_request_list=[];
 
+    $scope.signOut = function(){
+        window.location.assign("/");
+    };
+
     $scope.init = function(org_name,email_id, deptid,orgid){
 
         email=email_id;

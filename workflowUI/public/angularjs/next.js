@@ -6,6 +6,11 @@ var login = angular.module('next', []);
 
 login.controller('nextcontroller', function($scope, $window ,$http) {
 
+    $scope.signOut = function(){
+
+        window.location.assign("/");
+    };
+
     $scope.createNext= function(level_name,org_name,workflow_id){
 
         var a = parseInt(level_name.slice(-1));

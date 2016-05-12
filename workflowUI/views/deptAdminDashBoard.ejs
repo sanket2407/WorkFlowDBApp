@@ -263,9 +263,31 @@
 </div>
 
 
+<!--Sign Out Modal -->
 
+<div id="signOutModal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-md">
+        <!-- Create Department Modal Content -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h3 class="moda-title">Delete Email</h3>
+            </div>
+            <div class="modal-body">
+                <form role="form" name="createDepartmentForm">
+                    <div class="form-group">
+                        <h3><label for="email">Are you sure you want to sign out?</label></h3>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-2"><button type="button" class="btn btn-info btn-block" ng-click="signOut();">Yes</button></div>
+                        <div class="col-sm-2"><button type="button" class="btn btn-info btn-block" ng-click="init('<%=org_name%>','<%=email%>');">No</button></div>
+                    </div>
+                </form>
 
-
+            </div>
+        </div>
+    </div>
+</div>
 
 </body>
 </html>

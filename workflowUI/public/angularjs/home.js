@@ -3,9 +3,15 @@
 var login = angular.module('home', []);
 
 //defining the login controller
-
 login.controller('homecontroller', function($scope, $window ,$http) {
 
+    var bgImagesList =["background.png"];
+    var background = bgImagesList[Math.floor(Math.random() * bgImagesList.length)];
+    $scope.setBackground = function(){
+        return {
+            'background-image':'url(images/' + background + ')'
+        }
+    }
 
     $scope.submit = function(usecase) {
 
@@ -83,5 +89,11 @@ login.controller('homecontroller', function($scope, $window ,$http) {
         else
             window.location.assign('/adminSignUp');
 
+    };
+
+
+    $scope.signOut = function(){
+
+        window.location.assign("/");
     };
 })

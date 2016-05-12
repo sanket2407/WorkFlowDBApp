@@ -14,12 +14,13 @@ login.controller('admincontroller', function($scope, $window ,$http) {
     };
 
     $scope.department = [];
+
 // Organization Admin  services
     $scope.init = function(org_name,email_id){
 
         email=email_id;
         console.log("inside init function");
-        console.log("organization name"+org_name);
+        console.log(">>> organization name: "+org_name);
         orgname=org_name;
         $http({
             method: "post",
@@ -52,7 +53,7 @@ login.controller('admincontroller', function($scope, $window ,$http) {
         });
     };
 
-    $scope.addDept = function() {
+    $scope.addDept = function(email) {
         console.log("inside submit");
         console.log("Department Name ::" + $scope.dept_name);
 
@@ -64,7 +65,7 @@ login.controller('admincontroller', function($scope, $window ,$http) {
                 },
                 url:'http://localhost:8080/createDepartment',
                 data: JSON.stringify({
-                    "admin_email":"micro@micro.com",
+                    "admin_email":email,
                     "department_name":$scope.dept_name
                 })
             }).success(function (data) {
@@ -81,7 +82,7 @@ login.controller('admincontroller', function($scope, $window ,$http) {
             });
     };
 
-    $scope.addRole = function() {
+    $scope.addRole = function(email) {
         console.log("inside submit");
         console.log("Department Name ::" + $scope.role);
 

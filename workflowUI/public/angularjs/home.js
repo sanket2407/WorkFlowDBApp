@@ -39,7 +39,7 @@ login.controller('homecontroller', function($scope, $window ,$http) {
                 console.log(data.org_name);
                 // Setting up the session variable.
                // req.session.email=data.email;
-                window.location.assign('/orgAdminDashboard?admin_email=' + data.email_id+'&org_name='+data.org_name);
+                window.location.assign('/orgAdminDashboard?admin_email=' + data.admin_email+'&org_name='+data.org_name);
 
             }).error(function (error) {
                 console.log("inside error");

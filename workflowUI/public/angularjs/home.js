@@ -9,7 +9,7 @@ login.controller('homecontroller', function($scope, $window ,$http) {
     var background = bgImagesList[Math.floor(Math.random() * bgImagesList.length)];
     $scope.setBackground = function(){
         return {
-            'background-image':'url(images/' + background + ')'
+            'background-image':'url(images/' +background.JPG+ ')'
         }
     }
 

@@ -14,6 +14,9 @@ login.controller('admincontroller', function($scope, $window ,$http) {
     };
 
     $scope.department = [];
+    $scope.email = "sanket@hp.com";
+    $scope.org_name = "HP";
+    $scope.dept_name = "HP Hardware";
 
 // Organization Admin  services
     $scope.init = function(org_name,email_id){
@@ -21,6 +24,7 @@ login.controller('admincontroller', function($scope, $window ,$http) {
         email=email_id;
         console.log("inside init function");
         console.log(">>> organization name: "+org_name);
+
         orgname=org_name;
         $http({
             method: "post",

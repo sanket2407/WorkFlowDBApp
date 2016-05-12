@@ -54,6 +54,7 @@ login.controller('nextcontroller', function($scope, $window ,$http) {
 
         var a = parseInt(level_name.slice(-1));
         var b = parseInt(layer_name.slice(-1));
+        //var b=0;
         console.log("inside level js");
         console.log("level name:"+ level_name);
         console.log("level count:"+ a );
@@ -94,9 +95,47 @@ login.controller('nextcontroller', function($scope, $window ,$http) {
 
 
 
-    $scope.finish = function() {
+    $scope.finish = function(level_name,org_name,workflow_id) {
             console.log("inside finish");
-            window.location.assign('/deptAdminDashBoard');
+
+             var a = parseInt(level_name.slice(-1));
+                console.log("inside level js");
+                console.log("level name:"+ level_name);
+                console.log("level count:"+ a );
+                console.log("org name:" + org_name);
+                console.log("email:"+$scope.email);
+                console.log("description:"+$scope.desc);
+                console.log("workflow_id:"+workflow_id);
+
+                $http({
+                    method: "post",
+                    header:{
+                        'Accept':'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    url:'http://localhost:8080/addLevelIntoWorkflow',
+                    data: JSON.stringify({
+                            "workflow_id" : workflow_id,
+                            "worker_email_id" : $scope.email,
+                            "worker_org_name": org_name,
+                            "description" : $scope.desc,
+                            "level_name": level_name
+                    })
+                }).success(function(data) {
+                    console.log("inside success");
+                    console.log(data);
+                    // Setting up the session variable.
+                    // req.session.email=data.email;
+                   window.location.assign('/deptAdminDashBoard');
+                }).error(function (error) {
+                    console.log("inside error");
+                    console.log(error);
+                    console.log("unexpected_error");
+                });
+
+
+
+
     };
 
 })

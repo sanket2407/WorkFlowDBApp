@@ -75,7 +75,7 @@
         <div class="col-sm-4" >
             <h4 style="color: #ffffff"> Level Management </h4>
             <ul class="nav nav-pills nav-stacked">
-                <li><button type="button" id="request" class="btn btn-info btn-block"  data-toggle="modal" data-target="#addLevelModal"> Click here</button></li>
+                <li><button type="button" id="request" class="btn btn-info btn-block"  data-toggle="modal" data-target="#addLevelModal"> Create Next Level or Layer</button></li>
             </ul><br>
         </div>
         <div class="col-sm-4"></div>
@@ -126,7 +126,7 @@
                         </div>
                         <div class="col-sm-4">
                             <p class="text-left">
-                                <button type="button" id="createRequest" class="btn btn-info btn-block" ng-click="finish();">Finish</button>
+                                <button type="button" id="createRequest" class="btn btn-info btn-block" ng-click="finish('<%=level_name%>','<%=org_name%>','<%=workflow_id%>' );">Finish</button>
                             </p>
                         </div>
                     </div>

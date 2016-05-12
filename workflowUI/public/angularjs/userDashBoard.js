@@ -54,10 +54,10 @@ login.controller('usercontroller', function($scope, $window ,$http) {
                 console.log(item.department_name);
                 console.log(item);
 
-                workflow_instance_id=item.workflow_instance_id;
-                workflow_id=item.workflow_id;;
-                level_id=item.level_id;
-                layer_id=item.layer_id;
+                $scope.workflow_instance_id=item.workflow_instance_id;
+                $scope.workflow_id=item.workflow_id;;
+                $scope.level_id=item.level_id;
+                $scope.layer_id=item.layer_id;
 
                 console.log("Workflow instance id:"+workflow_instance_id);
                 console.log("workflow id:"+workflow_id);
@@ -76,6 +76,11 @@ login.controller('usercontroller', function($scope, $window ,$http) {
         });
     };
 
+    var instance_id_x;
+    var workflow_id_x;
+    var level_id_x;
+    var layer_id_x;
+
     $scope.inbox = function() {
         console.log("inside inbox function");
         $http({
@@ -90,6 +95,14 @@ login.controller('usercontroller', function($scope, $window ,$http) {
                 "org_name": orgname
             })
         }).success(function (data) {
+
+            console.log("*************");
+            console.log(data);
+
+        instance_id_x = data.assigned_or_pending_req_list[0].workflow_instance_id;
+        workflow_id_x = data.assigned_or_pending_req_list[0].workflow_id;
+        level_id_x = data.assigned_or_pending_req_list[0].level_id;
+        layer_id_x = data.assigned_or_pending_req_list[0].layer_id;
 
             angular.forEach(data.assigned_or_pending_req_list, function(item){
                 console.log(item.request_name);
@@ -114,6 +127,13 @@ login.controller('usercontroller', function($scope, $window ,$http) {
 
     $scope.approve = function() {
         console.log("inside inbox function");
+    console.log(instance_id_x);
+    console.log(workflow_id_x);
+    console.log(email);
+    console.log(orgname);
+    console.log(level_id_x);
+    console.log(layer_id_x);
+
         $http({
             method: "post",
             header:{
@@ -122,20 +142,45 @@ login.controller('usercontroller', function($scope, $window ,$http) {
             },
             url:'http://localhost:8080/approveRequest',
             data: JSON.stringify({
-                    "workflow_instance_id":workflow_instance_id ,
-                    "workflow_id" : workflow_id,
+                    "workflow_instance_id": instance_id_x ,
+                    "workflow_id" : workflow_id_x,
                     "email_id" : email,
-                    "org_name":orgname,
-                    "level_id" : level_id,
-                    "layer_id" : layer_id
+                    "org_name": orgname,
+                    "level_id" : level_id_x,
+                    "layer_id" : layer_id_x
             })
         }).success(function (data) {
 
             console.log("inside approve success");
             console.log(data);
-            console.log(data.email_id);
+            //console.log(data.email_id);
+            var temp_workflow_instance = data.workflow_instance_id;
 
-            //window.location.assign('/');
+                                 //=====================================1
+                                    $http({
+                                    method: "post",
+                                    header:{
+                                        'Accept':'application/json',
+                                        'Content-Type': 'application/json'
+                                    },
+                                    url:'http://localhost:8080/getNextWorkers',
+                                    data: JSON.stringify({
+                                        "workflow_instance_id": temp_workflow_instance
+                                    })
+                                }).success(function (data) {
+
+                                    console.log("inside success");
+                                    console.log("=======>:");
+                                    console.log(data);
+        
+
+                                    }).error(function (error) {
+                                        console.log("inside error");
+                                        console.log(error);
+                                        console.log("unexpected_error");
+                                    });
+
+                                    //=====================================
 
         }).error(function (error) {
             console.log("inside error");
@@ -281,8 +326,11 @@ login.controller('usercontroller', function($scope, $window ,$http) {
         });
 
     };
-    $scope.doRequest = function() {
+    $scope.doRequest = function(workflow_id) {
         console.log("inside update function");
+        console.log(">>>>>>>>>>>>>>>>>>>>>" + workflow_id);
+        console.log(">>>>>>>>>>>>>>>>>>>>>" + email);
+        console.log(">>>>>>>>>>>>>>>>>>>>>" + orgname);
 
         $http({
             method: "post",
@@ -302,8 +350,33 @@ login.controller('usercontroller', function($scope, $window ,$http) {
             console.log(data);
             console.log(data.email_id);
             console.log("Organization"+orgname);
-            console.log("email"+email_id);
+           // console.log("email"+email_id);
+            var temp_workflow_instance = data.workflow_instance_id;
 
+                                    //=====================================1
+                                    $http({
+                                    method: "post",
+                                    header:{
+                                        'Accept':'application/json',
+                                        'Content-Type': 'application/json'
+                                    },
+                                    url:'http://localhost:8080/getNextWorkers',
+                                    data: JSON.stringify({
+                                        "workflow_instance_id": temp_workflow_instance
+                                    })
+                                }).success(function (data) {
+
+                                    console.log("inside success");
+                                    console.log("=======>:"+data);
+        
+
+                                    }).error(function (error) {
+                                        console.log("inside error");
+                                        console.log(error);
+                                        console.log("unexpected_error");
+                                    });
+
+                                    //=====================================
 
         }).error(function (error) {
             console.log("inside error");

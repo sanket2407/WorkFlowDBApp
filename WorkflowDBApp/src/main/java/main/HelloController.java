@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import databaseConnection.DBConnection;
 import model.AllDepartments;
+import model.AllDepartments1;
 import model.AllOrganizations;
 import model.AllUnassignedDepartments;
 import model.AllUsers;
@@ -364,7 +365,7 @@ public class HelloController {
 	}
 
 	/*
-	 * { "admin_email" : "micro@micro.com", "department_name" : "Software" }
+	 * { "admin_email" : "micro@micro.com", "department_name" : " m" }
 	 */
 	@RequestMapping(value = "/createDepartment", method = RequestMethod.POST)
 	@ResponseBody
@@ -1322,6 +1323,62 @@ public class HelloController {
 		return new ResponseEntity<Object>(allDepartments, HttpStatus.OK);
 	}
 
+	/*
+	 * {"org_name": "Microsoft"}
+	 */
+	@RequestMapping(value = "/getAllDepartments1", method = RequestMethod.POST)
+	@ResponseBody
+	public ResponseEntity<Object> getAllDepartments1(@RequestBody AllDepartments1 allDepartments1) {
+
+		Helper helper = new Helper();
+		DBConnection dbCon = new DBConnection();
+		Connection conn = dbCon.getConnection();
+		Statement stmt = null;
+
+		allDepartments1.setOrg_id(helper.getOrgIDFromOrgName(allDepartments1.getOrg_name()));
+
+		try {
+
+			stmt = conn.createStatement();
+			String sql;
+			sql = "SELECT name from department where org_id ='"+allDepartments1.getOrg_id()+"'";
+			ResultSet rs = stmt.executeQuery(sql);
+			System.out.println(sql);
+			
+			List<String> temp_list = new ArrayList<String>();
+			while (rs.next()) {
+
+				temp_list.add(rs.getString("name"));
+
+			}
+			allDepartments1.setDept_list(temp_list);
+			System.out.println("All departments : " + allDepartments1.getDept_list());
+			
+			rs.close();
+			stmt.close();
+			conn.close();
+		} catch (Exception e) {
+			// Handle errors for Class.forName
+			e.printStackTrace();
+		} finally {
+			// finally block used to close resources
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException se1) {
+				se1.printStackTrace();
+			} // nothing we can do
+			try {
+				if (conn != null)
+					conn.close();
+			} catch (SQLException se2) {
+				se2.printStackTrace();
+			} // end finally try
+		} // end try
+
+		return new ResponseEntity<Object>(allDepartments1, HttpStatus.OK);
+	}
+	
 	@RequestMapping(value = "/getAllOrganizations", method = RequestMethod.POST)
 	@ResponseBody
 	public ResponseEntity<Object> getAllOrganizations(@RequestBody AllOrganizations allOrganizations) {
@@ -1875,7 +1932,8 @@ public class HelloController {
 
 		return new ResponseEntity<Object>(getAllAssignedAndPendingRequests, HttpStatus.OK);
 	}
-
+	
+	
 	// ==========================================================
 
 	@RequestMapping(value = "/test", method = RequestMethod.POST)
